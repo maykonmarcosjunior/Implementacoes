@@ -22,31 +22,41 @@ int robo(coordenada atual, coordenada dimensoes, vector<vector<char>> matriz) {
     } else {return 0;}
     passos.enqueue(atual);
     static coordenada direita, esquerda, cima, baixo;
-    bool i_me, j_me, i_ma, j_ma;
+    coordenada vetor[5];
+    int i_me, j_me, i_ma, j_ma;
     while (true) {
         esquerda = direita = cima = baixo = atual;
         direita.j++; esquerda.j--; cima.i++; baixo.i--;
-        i_me = cima.i < dimensoes.i && matriz[cima.i][cima.j] == '1';
-        j_me = direita.j < dimensoes.j && matriz[direita.i][direita.j] == '1';
-        i_ma = baixo.i >= 0 && matriz[baixo.i][baixo.j] == '1';
-        j_ma = esquerda.j >= 0 && matriz[esquerda.i][esquerda.j] == '1';
-    
-        if (j_me && !caminho.contains(direita)) {
-            caminho.enqueue(direita);
-            passos.enqueue(direita);
-        }
-        if (i_me && !caminho.contains(cima)) {
-            caminho.enqueue(cima);
-            passos.enqueue(cima);
-        }
-        if (j_ma && !caminho.contains(esquerda)) {
-            caminho.enqueue(esquerda);
-            passos.enqueue(esquerda);
-        }
-        if (i_ma && !caminho.contains(baixo)) {
-            caminho.enqueue(baixo);
-            passos.enqueue(baixo);
-        }
+        vetor[1] = vetor[2] = vetor[3] = vetor[4] = NULL;
+        i_me = cima.i < dimensoes.i;
+        i_me &= matriz[cima.i][cima.j] == '1';
+        i_me &= !caminho.contains(cima);
+
+        j_me = direita.j < dimensoes.j;
+        j_me &= matriz[direita.i][direita.j] == '1';
+        j_me &= !caminho.contains(direita);
+
+        i_ma = baixo.i >= 0;
+        i_ma &= matriz[baixo.i][baixo.j] == '1';
+        i_ma &= !caminho.contains(baixo);
+
+        j_ma = esquerda.j >= 0;
+        j_ma &= matriz[esquerda.i][esquerda.j] == '1';
+        j_ma &= !caminho.contains(esquerda);
+
+        vetor[i_me*1] = cima;
+        vetor[j_me*2] = direita;
+        vetor[i_ma*3] = baixo;
+        vetor[j_ma*4] = esquerda;
+        caminho.enqueue(vetor[1]);
+        passos.enqueue(vetor[1]);
+        caminho.enqueue(vetor[2]);
+        passos.enqueue(vetor[2]);
+        caminho.enqueue(vetor[3]);
+        passos.enqueue(vetor[3]);
+        caminho.enqueue(vetor[4]);
+        passos.enqueue(vetor[4]);
+
         if (passos.size() > 1) {
             passos.dequeue();
             atual = passos.back();
@@ -78,8 +88,7 @@ void Aninhamento (string arquivo, structures::ArrayQueue<string>* saida) {
                             j++;
                         }
                         palavra.push_back(line[j]);
-                        pilha.push(palavra);
-                        
+                        pilha.push(palavra);                        
         // printando o nome do cenário ---------------------------------------
                         if (palavra == "<nome>"){
                             int k = j+1; 

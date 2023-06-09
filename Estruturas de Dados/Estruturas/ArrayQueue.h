@@ -51,26 +51,31 @@ template<typename T>
 structures::ArrayQueue<T>::ArrayQueue() {
     max_size_ = DEFAULT_SIZE;
     contents = new T[max_size_];
-    end_ = -1; }
+    end_ = -1;
+}
 
 template<typename T>
 structures::ArrayQueue<T>::ArrayQueue(std::size_t max) {
     max_size_ = max;
     contents = new T[max_size_];
-    end_ = -1; }
+    end_ = -1;
+}
 
 template<typename T>
 structures::ArrayQueue<T>::~ArrayQueue() {
-    delete [] contents; }
+    delete [] contents;
+}
 
 template<typename T>
 void structures::ArrayQueue<T>::enqueue(const T& data) {
     if (full()) {
         throw std::out_of_range("fila cheia");
-    } else {
+    } else if (data != NULL) {
         size_++;
         end_ = (end_ + 1)%(static_cast<int>(max_size_));
-        contents[end_] = data;    } }
+        contents[end_] = data;    
+    }
+}
 
 template<typename T>
 T structures::ArrayQueue<T>::dequeue() {
@@ -79,7 +84,9 @@ T structures::ArrayQueue<T>::dequeue() {
     } else {
         size_--;
         begin_ = (begin_ + 1)%(static_cast<int>(max_size_));
-        return contents[begin_]; } }
+        return contents[begin_];
+    }
+}
 
 template<typename T>
 T& structures::ArrayQueue<T>::back() {
