@@ -13,6 +13,11 @@ using namespace std;
 
 struct coordenada {
     int i, j;
+    bool operator==(const coordenada& other) const {
+        bool saida = i == other.i;
+        saida &= j == other.j;
+        return saida;
+    }
 };
 int robo(coordenada atual, coordenada dimensoes, vector<vector<char>> matriz) {
     structures::ArrayQueue<coordenada> caminho{dimensoes.i*dimensoes.j};
@@ -29,7 +34,7 @@ int robo(coordenada atual, coordenada dimensoes, vector<vector<char>> matriz) {
     while (true) {
         esquerda = direita = cima = baixo = atual;
         direita.j++; esquerda.j--; cima.i++; baixo.i--;
-        vetor[1] = vetor[2] = vetor[3] = vetor[4] = NULL;
+        vetor[1] = vetor[2] = vetor[3] = vetor[4] = atual;
         i_me = cima.i < dimensoes.i;
         i_me &= matriz[cima.i][cima.j] == '1';
         i_me &= !caminho.contains(cima);

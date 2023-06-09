@@ -13,7 +13,7 @@ class ArrayQueue {
     //! construtor padrao
     ArrayQueue();
     //! construtor com parametro
-    explicit ArrayQueue(unsigned int max);
+    explicit ArrayQueue(int max);
     //! destrutor padrao
     ~ArrayQueue();
     //! metodo enfileirar
@@ -22,12 +22,14 @@ class ArrayQueue {
     T dequeue();
     //! metodo retorna o ultimo
     T& back();
+    //! metodo verifica se contém
+    bool contains(const T& data) const;
     //! metodo limpa a fila
     void clear();
     //! metodo retorna tamanho atual
-    unsigned int size();
+    int size();
     //! metodo retorna tamanho maximo
-    unsigned int max_size();
+    int max_size();
     //! metodo verifica se vazio
     bool empty();
     //! metodo verifica se esta cheio
@@ -35,8 +37,8 @@ class ArrayQueue {
 
  private:
     T* contents;
-    unsigned int size_ = 0;
-    unsigned int max_size_;
+    int size_ = 0;
+    int max_size_;
     int begin_ = -1;  // indice do inicio (para fila circular)
     int end_ = -1;  // indice do fim (para fila circular)
     static const auto DEFAULT_SIZE = 10u;
@@ -54,7 +56,7 @@ structures::ArrayQueue<T>::ArrayQueue() {
 }
 
 template<typename T>
-structures::ArrayQueue<T>::ArrayQueue(unsigned int max) {
+structures::ArrayQueue<T>::ArrayQueue(int max) {
     max_size_ = max;
     contents = new T[max_size_];
     end_ = -1;
@@ -69,7 +71,7 @@ template<typename T>
 void structures::ArrayQueue<T>::enqueue(const T& data) {
     if (full()) {
         throw std::out_of_range("fila cheia");
-    } else if (data != NULL) {
+    } else if (!contains(data)) {
         size_++;
         end_ = (end_ + 1)%(static_cast<int>(max_size_));
         contents[end_] = data;    
@@ -97,6 +99,16 @@ T& structures::ArrayQueue<T>::back() {
 }
 
 template<typename T>
+bool structures::ArrayQueue<T>::contains(const T& data) const {
+    for (int i = 0; i < size_; i++) {
+        if (contents[i] == data) {
+            return true;
+        }
+    } return false;
+}
+
+
+template<typename T>
 void structures::ArrayQueue<T>::clear() {
     end_ = -1;
     begin_ = -1;
@@ -104,12 +116,12 @@ void structures::ArrayQueue<T>::clear() {
 }
 
 template<typename T>
-unsigned int structures::ArrayQueue<T>::size() {
+int structures::ArrayQueue<T>::size() {
     return size_;
 }
 
 template<typename T>
-unsigned int structures::ArrayQueue<T>::max_size() {
+int structures::ArrayQueue<T>::max_size() {
     return max_size_;
 }
 

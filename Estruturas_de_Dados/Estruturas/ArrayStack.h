@@ -1,7 +1,6 @@
 #ifndef STRUCTURES_ARRAY_STACK_H // muitos arquivos podem chamar pilha
 #define STRUCTURES_ARRAY_STACK_H // usar ifndef evita redundância
 
-#include <cstdint>  // inclui o std::size_t
 #include <stdexcept>  // inclui C++ exceptions
 
 namespace structures {
@@ -14,7 +13,7 @@ class ArrayStack {
     //! construtor simples
     ArrayStack();
     //! construtor com parâmetro tamanho
-    explicit ArrayStack(std::size_t); // não precisa dar nome ao parâmetro
+    explicit ArrayStack(unsigned int); // não precisa dar nome ao parâmetro
     //! destrutor
     ~ArrayStack();
     //! método empilha
@@ -26,9 +25,9 @@ class ArrayStack {
     //! método limpa pilha
     void clear();
     //! método retorna tamanho
-    std::size_t size();
+    unsigned int size();
     //! método retorna capacidade máxima
-    std::size_t max_size();
+    unsigned int max_size();
     //! verifica se está vazia
     bool empty();
     //! verifica se está cheia
@@ -37,7 +36,7 @@ class ArrayStack {
  private:
     T* contents;
     int top_;
-    std::size_t max_size_;
+    unsigned int max_size_;
 
     static const auto DEFAULT_SIZE = 10u; // constante estática com tipo definido pelo auto como unsigned
 }; }  // fecha o namespace structures
@@ -55,7 +54,7 @@ structures::ArrayStack<T>::ArrayStack() {
     top_ = -1; }
 
 template<typename T>
-structures::ArrayStack<T>::ArrayStack(std::size_t max) {
+structures::ArrayStack<T>::ArrayStack(unsigned int max) {
     max_size_ = max;
     contents = new T[max_size_];
     top_ = -1; }
@@ -88,11 +87,11 @@ void structures::ArrayStack<T>::clear() {
     top_ = -1; }
 
 template<typename T>
-std::size_t structures::ArrayStack<T>::size() {
+unsigned int structures::ArrayStack<T>::size() {
     return (top_ + 1); }
 
 template<typename T>
-std::size_t structures::ArrayStack<T>::max_size() {
+unsigned int structures::ArrayStack<T>::max_size() {
     return max_size_; }
 
 template<typename T>
