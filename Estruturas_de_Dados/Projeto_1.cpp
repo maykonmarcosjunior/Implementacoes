@@ -19,7 +19,9 @@ int robo(coordenada atual, coordenada dimensoes, vector<vector<char>> matriz) {
     structures::ArrayQueue<coordenada> passos{dimensoes.i*dimensoes.j};
     if (matriz[atual.i][atual.j] == '1') {
         caminho.enqueue(atual);
-    } else {return 0;}
+    } else {
+        return 0;
+    }
     passos.enqueue(atual);
     static coordenada direita, esquerda, cima, baixo;
     coordenada vetor[5];
@@ -57,12 +59,11 @@ int robo(coordenada atual, coordenada dimensoes, vector<vector<char>> matriz) {
         caminho.enqueue(vetor[4]);
         passos.enqueue(vetor[4]);
 
-        if (passos.size() > 1) {
-            passos.dequeue();
-            atual = passos.back();
-        } else {
+        if (passos.size() <= 1) {
             return caminho.size();
         }
+        passos.dequeue();
+        atual = passos.back();
     }
 }
 
