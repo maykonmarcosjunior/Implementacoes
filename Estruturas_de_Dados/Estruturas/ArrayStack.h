@@ -37,9 +37,10 @@ class ArrayStack {
     T* contents;
     int top_;
     unsigned int max_size_;
-
-    static const auto DEFAULT_SIZE = 10u; // constante estática com tipo definido pelo auto como unsigned
-}; }  // fecha o namespace structures
+    // constante estática com tipo definido pelo auto como unsigned
+    static const auto DEFAULT_SIZE = 10u;
+};
+}  // fecha o namespace structures
 
 #endif
 
@@ -51,17 +52,20 @@ template<typename T>
 structures::ArrayStack<T>::ArrayStack() {
     max_size_ = DEFAULT_SIZE;
     contents = new T[max_size_];
-    top_ = -1; }
+    top_ = -1;
+}
 
 template<typename T>
 structures::ArrayStack<T>::ArrayStack(unsigned int max) {
     max_size_ = max;
     contents = new T[max_size_];
-    top_ = -1; }
+    top_ = -1;
+}
 
 template<typename T>
 structures::ArrayStack<T>::~ArrayStack() {
-    delete [] contents; }
+    delete [] contents;
+}
 
 template<typename T>
 void structures::ArrayStack<T>::push(const T& data) {
@@ -69,35 +73,45 @@ void structures::ArrayStack<T>::push(const T& data) {
         throw std::out_of_range("pilha cheia");
     } else {
         top_++;
-        contents[top_] = data;    } }
+        contents[top_] = data;
+    }
+}
 
 template<typename T>
 T structures::ArrayStack<T>::pop() {
     if (empty()) {
         throw std::out_of_range("pilha vazia"); // exceção mais usada
     } else {
-        top_--; return contents[top_ + 1];    } }
+        top_--; return contents[top_ + 1];
+    }
+}
 
 template<typename T>
 T& structures::ArrayStack<T>::top() {
-    return contents[top_]; }
+    return contents[top_];
+}
 
 template<typename T>
 void structures::ArrayStack<T>::clear() {
-    top_ = -1; }
+    top_ = -1;
+}
 
 template<typename T>
 unsigned int structures::ArrayStack<T>::size() {
-    return (top_ + 1); }
+    return (top_ + 1);
+}
 
 template<typename T>
 unsigned int structures::ArrayStack<T>::max_size() {
-    return max_size_; }
+    return max_size_;
+}
 
 template<typename T>
 bool structures::ArrayStack<T>::empty() {
-    return top_ == -1; }
+    return top_ == -1;
+}
 
 template<typename T>
 bool structures::ArrayStack<T>::full() {
-   return top_ + 1 == static_cast<int>(max_size_);}
+   return top_ + 1 == static_cast<int>(max_size_);
+}

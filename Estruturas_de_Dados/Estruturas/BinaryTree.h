@@ -36,10 +36,9 @@ private:
             right = nullptr;
         }
         void atribui(Node* novo, const T& dataNew) {
-            Node **vet[3] = {nullptr, &left, &right};
-            int cE = data > dataNew;
-            int cR = data < dataNew;
-            *(vet[cE + 2*cR]) = novo;
+            Node **vet[3] = {&right, &left};
+            int cond = data > dataNew;
+            *(vet[cond]) = novo;
         }
         Node* avanca(const T& dataNew) {
             Node* vet[3] = {this, left, right};
@@ -110,7 +109,7 @@ void structures::BinaryTree<T>::insert(const T& data) {
             return;
         }
         pai = Novo;
-        Novo = pai->avanca(data);
+        Novo = Novo->avanca(data);
     }
     Novo = new Node(data);
     if (root == nullptr) {
@@ -129,7 +128,7 @@ void structures::BinaryTree<T>::remove(const T& data) {
     Node *pai = root, *remover = root;
     while (remover->data != data) {
         pai = remover;
-        remover = pai->avanca(data);
+        remover = remover->avanca(data);
         if (remover == nullptr) {
             return;
         }
@@ -151,6 +150,7 @@ void structures::BinaryTree<T>::remove(const T& data) {
     }
     pai->atribui(substituto, data);
     size_--;
+    remover->left = remover->right = nullptr;
     delete remover;
 }
 

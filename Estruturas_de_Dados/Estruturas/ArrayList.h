@@ -233,33 +233,3 @@ const T& ArrayList<T>::operator[](size_t index) const {
         throw out_of_range("índice inválido");
     } return contents[index];
 }
-
-
-
-int main() {
-    int a, b, c, d;
-    try {
-        ArrayList<int> lista(10);
-    
-    for (auto i = 9; i >= 0; --i) {
-        lista.insert_sorted(i);
-    }
-    for (auto i = 0; i < 10; ++i) {
-        cout << lista[i] << " ";
-    } cout << endl;
-
-    lista.clear();
-
-    lista.insert_sorted(10);
-    lista.insert_sorted(-10);
-    lista.insert_sorted(42);
-    lista.insert_sorted(0);
-    cout << lista[0] << " ";
-    cout << lista[1] << " ";
-    cout << lista[2] << " ";
-    cout << lista[3] << endl;
-    } catch (exception const& ex) {
-        cerr << "Exception: " << ex.what() << endl;
-    }
-    return 0;
-}

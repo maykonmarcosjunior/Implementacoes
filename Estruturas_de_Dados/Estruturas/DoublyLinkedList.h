@@ -118,8 +118,6 @@ class DoublyLinkedList {
 
 }  // namespace structures
 
-#endif
-
 template<typename T>
 structures::DoublyLinkedList<T>::DoublyLinkedList() {}
 
@@ -309,7 +307,7 @@ const T& structures::DoublyLinkedList<T>::at(size_t index) const {
     }
 }
 
-
+/*
 #include <iostream>
 
 int main()
@@ -319,7 +317,7 @@ int main()
 
     std::cout << "Teste Insert Sorted\n";
 
-    /*
+    
     for (auto i = 9; i >= 0; --i) {
         list.insert_sorted(i);
     }
@@ -327,7 +325,7 @@ int main()
         std::cout << i << " = " << list.at(i) << std::endl;
     }
     list.clear();
-    */
+    
     
     list.insert_sorted(10);
     list.insert_sorted(-10);
@@ -340,7 +338,7 @@ int main()
 
     list.clear();
 
-    /*
+    
     std::cout << "Teste Insert\n";
 
     for (auto i = 0; i < 5; ++i) {
@@ -356,9 +354,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*std::cout << "Teste Basic Push Back\n";
+    std::cout << "Teste Basic Push Back\n";
     
     list.push_back(0);
     std::cout << "1 = " << list.size() << std::endl;
@@ -369,9 +367,9 @@ int main()
     std::cout << "0 = " << list.at(0) << std::endl;
     std::cout << "-1 = " << list.at(1) << std::endl;
     
-    list.clear();*/
+    list.clear();
 
-    /*
+    
     std::cout << "Teste Push Back\n";
     
     for (auto i = 0; i < 10; ++i) {
@@ -384,9 +382,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Basic Push Front\n";
     
     list.push_front(0);
@@ -399,9 +397,9 @@ int main()
     std::cout << "0 = " << list.at(1) << std::endl;
 
     list.clear();
-    */
     
-    /*
+    
+    
     std::cout << "Teste Push Front\n";
 
     for (int i = 0; i < 10; ++i) {
@@ -413,9 +411,9 @@ int main()
     }
 
     list.clear();
-    */
     
-    /*
+    
+    
     std::cout << "Teste Empty\n";
 
     std::cout << "true == " << list.empty() << std::endl;
@@ -424,9 +422,9 @@ int main()
     std::cout << "false == " << list.empty() << std::endl;
 
     list.clear();
-    */
     
-    /*
+    
+    
     std::cout << "Teste Clear\n";
     
     for (auto i = 0; i < 10; ++i) {
@@ -434,9 +432,9 @@ int main()
     }
     list.clear(); 
     std::cout << "0 = " << list.size() << std::endl;
-    */
     
-    /*
+    
+    
     std::cout << "Teste Find\n";
 
     for (auto i = 0u; i < 10u; ++i) {
@@ -449,9 +447,9 @@ int main()
     std::cout << list.size() << " = " << list.find(10) << std::endl;
 
     list.clear();
-    */
     
-    /*
+    
+    
     std::cout << "Teste Contains\n";
 
     for (auto i = 0; i < 10; ++i) {
@@ -462,9 +460,9 @@ int main()
     std::cout << "false == " << list.contains(10) << std::endl;
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste at\n";
 
     for (auto i = 0; i < 10; ++i) {
@@ -482,9 +480,9 @@ int main()
         std::cout << (10 - i) << " = " << list.at(i) << std::endl;
     }
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste at Bondary Checks\n";
 
 
@@ -501,9 +499,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Insert Bondary\n";
     
     try {
@@ -515,9 +513,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Empty Pop Back\n";
     
     try {
@@ -527,9 +525,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Pop Back\n";
 
     for (auto i = 0; i < 10; ++i) {
@@ -541,9 +539,9 @@ int main()
     std::cout << "true = " << list.empty() << std::endl;
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Empty Pop Front\n";
 
     for (auto i = 9; i >= 0; --i) {
@@ -555,9 +553,9 @@ int main()
     std::cout << "true = " << list.empty() << std::endl;
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Pop\n";
 
     for (auto i = 0; i < 10; ++i) {
@@ -573,9 +571,9 @@ int main()
     }
 
     list.clear();
-    */
+    
 
-    /*
+    
     std::cout << "Teste Remove\n";
 
 
@@ -585,7 +583,7 @@ int main()
     list.remove(4);
     std::cout << 9 << " = " << list.size() << std::endl;
     std::cout << "false = " << list.contains(4) << std::endl;
-    */
+    
 
     return 0;
-}
+} */

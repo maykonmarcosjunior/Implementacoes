@@ -71,7 +71,7 @@ void structures::ArrayQueue<T>::enqueue(const T& data) {
         throw std::out_of_range("fila cheia");
     } else if (data != NULL) {
         size_++;
-        end_ = (end_ + 1)%(static_cast<int>(max_size_));
+        end_ = (end_ + 1)%(max_size_);
         contents[end_] = data;    
     }
 }
@@ -82,7 +82,7 @@ T structures::ArrayQueue<T>::dequeue() {
         throw std::out_of_range("fila vazia");
     } else {
         size_--;
-        begin_ = (begin_ + 1)%(static_cast<int>(max_size_));
+        begin_ = (begin_ + 1)%(max_size_));
         return contents[begin_];
     }
 }
@@ -92,7 +92,7 @@ T& structures::ArrayQueue<T>::back() {
     if (empty()) {
         throw std::out_of_range("fila vazia");
     } else {
-        return contents[begin_ + 1]; 
+        return contents[begin_ + 1];
     }
 }
 
@@ -115,7 +115,7 @@ unsigned int structures::ArrayQueue<T>::max_size() {
 
 template<typename T>
 bool structures::ArrayQueue<T>::empty() {
-    return 0 == static_cast<int>(size_); 
+    return 0u == size_; 
 }
 
 template<typename T>
