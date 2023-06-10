@@ -35,6 +35,33 @@ private:
             left = nullptr;
             right = nullptr;
         }
+        void pre_order(ArrayList<T>* v) const {
+            v->push_back(data);
+            if (left != nullptr) {
+                left->pre_order(v);
+            }
+            if (right != nullptr) {
+                right->pre_order(v);
+            }
+        }
+        void in_order(ArrayList<T>* v) const {
+            if (left != nullptr) {
+                left->in_order(v);
+            }
+            v->push_back(data);
+            if (right != nullptr) {
+                right->in_order(v);
+            }
+        }
+        void post_order(ArrayList<T>* v) const {
+            if (left != nullptr) {
+                left->post_order(v);
+            }
+            if (right != nullptr) {
+                right->post_order(v);
+            }
+            v->push_back(data);
+        }
         void atribui(Node* novo, const T& dataNew) {
             Node **vet[3] = {&right, &left};
             int cond = data > dataNew;
@@ -50,35 +77,6 @@ private:
             int cE = left != nullptr;
             int cR = right != nullptr;
             return 2*cE + cR + 1 - 4*cE*cR;
-        }
-        void pre_order(ArrayList<T>* v) const {
-            v->push_back(data);
-            if (left != nullptr) {
-                left->pre_order(v);
-            }
-            if (right != nullptr) {
-                right->pre_order(v);
-            }
-        }
-
-        void in_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
-                left->in_order(v);
-            }
-            v->push_back(data);
-            if (right != nullptr) {
-                right->in_order(v);
-            }
-        }
-
-        void post_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
-                left->post_order(v);
-            }
-            if (right != nullptr) {
-                right->post_order(v);
-            }
-            v->push_back(data);
         }
     };
 
@@ -103,13 +101,13 @@ structures::BinaryTree<T>::~BinaryTree() {
 
 template<typename T>
 void structures::BinaryTree<T>::insert(const T& data) {
-    Node *Novo = root, *pai;
+    Node *Novo = root, *pai = nullptr;
     while (Novo != nullptr) {
         if (Novo->data == data) {
             return;
         }
         pai = Novo;
-        Novo = Novo->avanca(data);
+        Novo = pai->avanca(data);
     }
     Novo = new Node(data);
     if (root == nullptr) {
@@ -133,24 +131,31 @@ void structures::BinaryTree<T>::remove(const T& data) {
             return;
         }
     }
-    Node* escolha[2] = {remover->right, remover->left};
+    Node* escolha[2] = {remover->left, remover->right};
     int cond = remover->terminal();
-    Node *substituto = escolha[cond == 3];
+    int iterou = 0;
+    Node *substituto = escolha[cond != 3], *pai2 = pai;
     if (!cond) {  // se não for terminal
-        Node* pai2 = pai;
         while (substituto->left != nullptr) {
             pai2 = substituto;
             substituto = substituto->left;
         }
-        if (substituto != remover->right) {
-            pai2->left = substituto->right;
-            substituto->right = remover->right;
-        }
-        substituto->left = remover->left;
+        // caso pelo menos uma iteração seja feita
+        iterou = substituto != remover->right;
+        Node *escolha2[3] = {pai2->left,
+                             substituto->right,
+                             remover->right};
+        // se sim, substituto->right, se não, mantém
+        pai2->atribui(escolha2[iterou], data);
+        // se sim, remover->right, se não, mantém
+        substituto->atribui(escolha2[iterou + 1],
+                            remover->right->data);
+        // independente de quantas iterações...
+        substituto->atribui(remover->left,
+                            remover->left->data);
     }
     pai->atribui(substituto, data);
     size_--;
-    remover->left = remover->right = nullptr;
     delete remover;
 }
 

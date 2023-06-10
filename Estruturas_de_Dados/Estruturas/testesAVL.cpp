@@ -6,15 +6,12 @@
 #include <string>
 #include <vector>
 
-#include "gtest/gtest.h"
 #include "AVLTree.h"
+#include "gtest/gtest.h"
 
 namespace {
 
-
-/**
- * Classe com propósito de oferecer maior robustez aos testes.
- */
+// Classe com propósito de oferecer maior robustez aos testes. 
 class Dummy {
 public:
     Dummy() = default;
@@ -54,14 +51,14 @@ public:
     }
 
 private:
-    /**
-     * Valor encapsulado
-     */
+    
+    // Valor encapsulado    
     double value_{0.};
 };
 
 /**
- * Sobrescrita do operador std::ostream<<(Dummy) para possibilitar printar um
+ * Sobrescrita do operador std::ostream<<(Dummy)
+ *  para possibilitar printar um
  * Dummy através do std::cout.
  */
 std::ostream& operator<<(std::ostream& os, const Dummy& dummy) {

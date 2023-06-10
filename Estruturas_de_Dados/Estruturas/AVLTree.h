@@ -70,8 +70,16 @@ private:
         }
         int terminal() {
             int cE = left != nullptr;
-            int cR = right != nullptr;
-            return 2*cE + cR + 1 - 4*cE*cR;
+            int cD = right != nullptr;
+            return 2*cE + cD + 1 - 4*cE*cD;
+        }
+        bool corrige_altura() {
+            int esquerda = (left != nullptr)? left->height : -1;
+            int direita = (right != nullptr)? right->height : -1;
+            int certo = (direita > esquerda) ? direita : esquerda;
+            bool saida = height != certo + 1;
+            height = certo + 1;
+            return saida;
         }
         void atribui(Node* novo, const T& dataNew) {
             Node **vet[3] = {&right, &left};
@@ -80,6 +88,7 @@ private:
             if (novo != nullptr) {
                 novo->pai = this;
             }
+            corrige_altura();
         }
         Node* avanca(const T& dataNew) {
             Node* vet[3] = {this, left, right};
@@ -87,29 +96,19 @@ private:
             int cR = data < dataNew;
             return vet[cE + 2*cR];
         }
-        bool corrige_altura(bool flag=true) {
-            int certo = -1;
-            if (left != nullptr) {
-                certo = left->height;
-            }
-            if (right != nullptr) {
-                certo = (right->height > certo) ? right->height : certo;
-            }
-            bool saida = height != certo + 1;
-            height = (flag)? certo + 1 : height;
-            return saida;
-        }
         void simpleLeft() {
-            height--;
-            left->height++;
             auto B = left;
+            if (B == nullptr) {
+                return;
+            }
             atribui(B->right, B->data);
             B->atribui(this, data);
         }
         void simpleRight() {
-            height--;
-            right->height++;
             auto B = right;
+            if (B == nullptr) {
+                return;
+            }
             atribui(B->left, B->data);
             B->atribui(this, data);
         }
@@ -161,6 +160,14 @@ private:
                 }
             }
         }
+        void updateHeight() {
+            if (abs(fb()) > 1) {
+                rotacao();
+            }
+            if (pai != nullptr && pai->corrige_altura()) {
+                pai->updateHeight();
+            }
+        }
     };
 
     void destructor(Node* Nodo) {
@@ -168,17 +175,6 @@ private:
             destructor(Nodo->left);
             destructor(Nodo->right);
             delete Nodo;
-        }
-    }
-    void updateHeight(Node* ponta) {
-        if (ponta == nullptr || ponta->corrige_altura(false)) {
-            return;
-        }
-        while (ponta->pai != nullptr && ponta->corrige_altura()) {
-            if (abs(ponta->fb()) > 1) {
-                ponta->rotacao();
-            }
-            ponta = ponta->pai;
         }
     }
 
@@ -208,9 +204,9 @@ void structures::AVLTree<T>::insert(const T& data) {
         root = Novo;
     } else {
         pai->atribui(Novo, data);
-        updateHeight(pai);
     }
     size_++;
+    Novo->updateHeight();
 }
 
 template<typename T>
@@ -226,26 +222,32 @@ void structures::AVLTree<T>::remove(const T& data) {
             return;
         }
     }
-    Node* escolha[2] = {remover->right, remover->left};
+    Node* escolha[2] = {remover->left, remover->right};
     int cond = remover->terminal();
-    Node *substituto = escolha[cond == 3], *pai2 = pai;
+    int iterou = 0;
+    Node *substituto = escolha[cond != 3], *pai2 = pai;
     if (!cond) {  // se não for terminal
         while (substituto->left != nullptr) {
             pai2 = substituto;
             substituto = substituto->left;
         }
-        if (substituto != remover->right) {
-            pai2->left = substituto->right;
-            substituto->right = remover->right;
-        }
-        substituto->left = remover->left;
+        // caso pelo menos uma iteração seja feita
+        iterou = substituto != remover->right;
+        Node *escolha2[3] = {pai2->left,
+                             substituto->right,
+                             remover->right};
+        // se sim, substituto->right, se não, mantém
+        pai2->atribui(escolha2[iterou], data);
+        // se sim, remover->right, se não, mantém
+        substituto->atribui(escolha2[iterou + 1],
+                            remover->right->data);
+        // independente de quantas iterações...
+        substituto->atribui(remover->left,
+                            remover->left->data);
     }
     pai->atribui(substituto, data);
     size_--;
-    if (substituto != nullptr) {
-        substituto->height = remover->height;
-    }
-    updateHeight(pai2);
+    pai2->updateHeight();
     delete remover;
 }
 
