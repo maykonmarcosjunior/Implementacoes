@@ -1,7 +1,6 @@
 // Copyright [2023] <Maykon Marcos Junior>
 #include <stdio.h>
 #include <stdexcept>  // C++ Exceptions
-#include <iostream>
 
 using namespace std;
 
@@ -204,7 +203,6 @@ T& ArrayList<T>::operator[](int index) {
     return contents[index];
 }
 
-// const sinaliza que essa funçã é só de consulta
 template<typename T>
 T& ArrayList<T>::at(int index) {
     if (index < 0 || index >= size_) {
