@@ -88,15 +88,11 @@ private:
         }
         /*
         faz com que a altura seja igual
-        à maior das subárvore + 1, e
-        retorna se foi ou não preciso
-        fazer a correção
+        à maior das subárvore + 1
         */
-        bool corrige_altura() {
+        void corrige_altura() {
             int certo = (HRight() > HLeft()) ? HRight() + 1 : HLeft() + 1;
-            bool saida = (height != certo);
             height = certo;
-            return saida;
         }
         /*
         para o percorrer da lista
@@ -110,7 +106,7 @@ private:
         /*
         centraliza a inserção
         */
-        void atribui(Node* novo, const T& dataNew) {
+        void insert(Node* novo, const T& dataNew) {
             Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
             *(vet[cond]) = novo;
@@ -123,12 +119,12 @@ private:
             Node *paiA = pai;
             Node *B = this->left;
             // A->left = B->right
-            atribui(B->right, B->data);
+            insert(B->right, B->data);
             // B->right = A
-            B->atribui(this, data);
+            B->insert(this, data);
             // B->pai = paiA
             if (paiA != nullptr) {
-                paiA->atribui(B, B->data);
+                paiA->insert(B, B->data);
             } else {
                 B->pai = nullptr;
             }
@@ -137,12 +133,12 @@ private:
             Node *paiA = pai;
             Node *B = this->right;
             // A->right = B->left
-            atribui(B->left, B->data);
+            insert(B->left, B->data);
             // B->left = A
-            B->atribui(this, data);
+            B->insert(this, data);
             // B->pai = paiA
             if (paiA != nullptr) {
-                paiA->atribui(B, B->data);
+                paiA->insert(B, B->data);
             } else {
                 B->pai = nullptr;
             }
@@ -228,7 +224,7 @@ void structures::AVLTree<T>::insert(const T& data) {
     if (root == nullptr) {
         root = Novo;
     } else {
-        pai->atribui(Novo, data);
+        pai->insert(Novo, data);
     }
     size_++;
     Novo->updateHeight();
@@ -262,15 +258,15 @@ void structures::AVLTree<T>::remove(const T& data) {
                              substituto->right,
                              remover->right};
         // se sim, substituto->right, se não, mantém
-        pai2->atribui(escolha2[iterou], data);
+        pai2->insert(escolha2[iterou], data);
         // se sim, remover->right, se não, mantém
-        substituto->atribui(escolha2[iterou + 1],
+        substituto->insert(escolha2[iterou + 1],
                             remover->right->data);
         // independente de quantas iterações...
-        substituto->atribui(remover->left,
+        substituto->insert(remover->left,
                             remover->left->data);
     }
-    pai->atribui(substituto, data);
+    pai->insert(substituto, data);
     size_--;
     delete remover;
     pai2->updateHeight();
