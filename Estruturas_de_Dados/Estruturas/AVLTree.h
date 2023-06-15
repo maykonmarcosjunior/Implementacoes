@@ -86,17 +86,30 @@ private:
             int cD = right != nullptr;
             return 2*cE + cD + 1 - 4*cE*cD;
         }
+        /*
+        faz com que a altura seja igual
+        à maior das subárvore + 1, e
+        retorna se foi ou não preciso
+        fazer a correção
+        */
         bool corrige_altura() {
             int certo = (HRight() > HLeft()) ? HRight() + 1 : HLeft() + 1;
             bool saida = (height != certo);
             height = certo;
             return saida;
         }
+        /*
+        para o percorrer da lista
+        buscando um elemento
+        */
         Node* avanca(const T& dataNew) {
             Node* vet[2] = {right, left};
             int cond = data > dataNew;
             return vet[cond];
         }
+        /*
+        centraliza a inserção
+        */
         void atribui(Node* novo, const T& dataNew) {
             Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
@@ -107,32 +120,38 @@ private:
             corrige_altura();
         }
         void simpleLeft() {
-            auto B = left;
+            Node *paiA = pai;
+            Node *B = this->left;
+            // A->left = B->right
             atribui(B->right, B->data);
+            // B->right = A
             B->atribui(this, data);
-            if (pai != nullptr) {
-                pai->atribui(B, B->data);
+            // B->pai = paiA
+            if (paiA != nullptr) {
+                paiA->atribui(B, B->data);
+            } else {
+                B->pai = nullptr;
             }
         }
         void simpleRight() {
-            auto B = right;
+            Node *paiA = pai;
+            Node *B = this->right;
+            // A->right = B->left
             atribui(B->left, B->data);
+            // B->left = A
             B->atribui(this, data);
-            if (pai != nullptr) {
-                pai->atribui(B, B->data);
+            // B->pai = paiA
+            if (paiA != nullptr) {
+                paiA->atribui(B, B->data);
+            } else {
+                B->pai = nullptr;
             }
         }
         void doubleLeft() {
-            // nesse caso, left tem
-            // right não nulo, mas não
-            // se garante o left dele
             left->simpleRight();
             simpleLeft();
         }
         void doubleRight() {
-            // nesse caso, right tem
-            // left não nulo, mas não
-            // se garante o right dele
             right->simpleLeft();
             simpleRight();
         }
@@ -253,8 +272,8 @@ void structures::AVLTree<T>::remove(const T& data) {
     }
     pai->atribui(substituto, data);
     size_--;
-    pai2->updateHeight();
     delete remover;
+    pai2->updateHeight();
 }
 
 template<typename T>
