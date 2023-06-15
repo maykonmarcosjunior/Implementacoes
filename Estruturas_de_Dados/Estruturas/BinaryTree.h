@@ -63,15 +63,14 @@ private:
             v->push_back(data);
         }
         void atribui(Node* novo, const T& dataNew) {
-            Node **vet[3] = {&right, &left};
+            Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
             *(vet[cond]) = novo;
         }
         Node* avanca(const T& dataNew) {
-            Node* vet[3] = {this, left, right};
-            int cE = data > dataNew;
-            int cR = data < dataNew;
-            return vet[cE + 2*cR];
+            Node* vet[2] = {right, left};
+            int cond = data > dataNew;
+            return vet[cond];
         }
         int terminal() {
             int cE = left != nullptr;
@@ -103,9 +102,6 @@ template<typename T>
 void structures::BinaryTree<T>::insert(const T& data) {
     Node *Novo = root, *pai = nullptr;
     while (Novo != nullptr) {
-        if (Novo->data == data) {
-            return;
-        }
         pai = Novo;
         Novo = pai->avanca(data);
     }

@@ -1,5 +1,5 @@
 // Copyright [2023] <Maykon Marcos Junior>
-#include "ArrayList.h"
+#include "array_list.h"
 
 namespace structures {
 
@@ -41,6 +41,14 @@ private:
             right = nullptr;
             pai = nullptr;
         }
+        int HLeft() {
+            int altE = (left != nullptr)? left->height : -1;
+            return altE;
+        }
+        int HRight() {
+            int altR = (right != nullptr)? right->height : -1;
+            return altR;
+        }
         void pre_order(ArrayList<T>* v) const {
             v->push_back(data);
             if (left != nullptr) {
@@ -68,21 +76,29 @@ private:
             }
             v->push_back(data);
         }
+        // retorna 0 se tiver subárvores
+        // esquerdas e direitas,
+        // 1 se for um nodo terminal,
+        // 2 se tiver só subárvore direita e
+        // 3 se só tiver subárvore esquerda
         int terminal() {
             int cE = left != nullptr;
             int cD = right != nullptr;
             return 2*cE + cD + 1 - 4*cE*cD;
         }
         bool corrige_altura() {
-            int esquerda = (left != nullptr)? left->height : -1;
-            int direita = (right != nullptr)? right->height : -1;
-            int certo = (direita > esquerda) ? direita : esquerda;
-            bool saida = height != certo + 1;
-            height = certo + 1;
+            int certo = (HRight() > HLeft()) ? HRight() + 1 : HLeft() + 1;
+            bool saida = (height != certo);
+            height = certo;
             return saida;
         }
+        Node* avanca(const T& dataNew) {
+            Node* vet[2] = {right, left};
+            int cond = data > dataNew;
+            return vet[cond];
+        }
         void atribui(Node* novo, const T& dataNew) {
-            Node **vet[3] = {&right, &left};
+            Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
             *(vet[cond]) = novo;
             if (novo != nullptr) {
@@ -90,27 +106,21 @@ private:
             }
             corrige_altura();
         }
-        Node* avanca(const T& dataNew) {
-            Node* vet[3] = {this, left, right};
-            int cE = data > dataNew;
-            int cR = data < dataNew;
-            return vet[cE + 2*cR];
-        }
         void simpleLeft() {
             auto B = left;
-            if (B == nullptr) {
-                return;
-            }
             atribui(B->right, B->data);
             B->atribui(this, data);
+            if (pai != nullptr) {
+                pai->atribui(B, B->data);
+            }
         }
         void simpleRight() {
             auto B = right;
-            if (B == nullptr) {
-                return;
-            }
             atribui(B->left, B->data);
             B->atribui(this, data);
+            if (pai != nullptr) {
+                pai->atribui(B, B->data);
+            }
         }
         void doubleLeft() {
             // nesse caso, left tem
@@ -127,9 +137,7 @@ private:
             simpleRight();
         }
         int fb() {
-            int altE = (left == nullptr)? -1 : left->height;
-            int altR = (right == nullptr)? -1 : right->height;
-            return altE - altR;
+            return HLeft() - HRight();
         }
         void rotacao() {
             if (fb() > 1) {
@@ -161,10 +169,11 @@ private:
             }
         }
         void updateHeight() {
+            corrige_altura();
             if (abs(fb()) > 1) {
                 rotacao();
             }
-            if (pai != nullptr && pai->corrige_altura()) {
+            if (pai != nullptr) {
                 pai->updateHeight();
             }
         }
@@ -193,9 +202,6 @@ template<typename T>
 void structures::AVLTree<T>::insert(const T& data) {
     Node *Novo = root, *pai = nullptr;
     while (Novo != nullptr) {
-        if (Novo->data == data) {
-            return;
-        }
         pai = Novo;
         Novo = pai->avanca(data);
     }
