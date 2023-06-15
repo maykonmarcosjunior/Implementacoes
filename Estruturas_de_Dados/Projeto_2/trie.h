@@ -76,13 +76,13 @@ private:
             }
             return false;
         }
-        int prefixos(std::string palavra) {
+        int prefix(std::string palavra) {
             if (posicao == static_cast<int>(palavra.length())) {
                 return prefixos;
             }
             Node* teste = find(palavra[posicao]);
             if (teste != nullptr) {
-                return teste->contains(palavra);
+                return teste->prefix(palavra);
             }
             return 0;
         }
@@ -146,8 +146,8 @@ bool structures::Trie::contains(std::string palavra) const {
     return root->contains(palavra);
 }
 
-bool structures::Trie::contains(std::string palavra) const {
-    return root->prefixos(palavra);
+bool structures::Trie::prefixos(std::string palavra) const {
+    return root->prefix(palavra);
 }
 
 bool structures::Trie::empty() const {

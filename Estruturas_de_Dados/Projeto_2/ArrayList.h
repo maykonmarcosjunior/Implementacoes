@@ -16,6 +16,7 @@ class ArrayList {
     void clear();
     void push_back(const T& data);
     void push_front(const T& data);
+    void insert_at(const T& data, int index);
     void insert(const T& data, int index);
     void insert_sorted(const T& data);
     T pop(int index);
@@ -36,7 +37,16 @@ class ArrayList {
     int size_;
     int max_size_;
 
-    static const auto DEFAULT_MAX = 10u;
+    static const auto DEFAULT_MAX = 100u;
+    void resize() {
+        max_size_ = 2 * max_size_;
+        T *tempContents = new T[max_size_];
+        for (int i = 0; i < size_; i++) {
+            tempContents[i] = contents[i];
+        }
+        delete[] contents;
+        T *contents = tempContents;
+    }
 };
 
 }  // namespace structures
@@ -68,36 +78,44 @@ void ArrayList<T>::clear() {
 
 template<typename T>
 void ArrayList<T>::push_back(const T& data) {
-    if (full()) {
-        throw out_of_range("lista cheia");
-    } else {
+    full();
     contents[size_] = data;
-    size_++;}
+    size_++;
 }
 
 template<typename T>
 void ArrayList<T>::push_front(const T& data) {
-    if (full()) {
-        throw out_of_range("lista cheia");
-    } else {
-    for (int i = static_cast<int>(size_);
-    i > 0; i--) {
-        contents[i] = contents[i-1];
-    } contents[0] = data; size_++;}
+    full();
+    for (int i = size_; i > 0; i--) {
+        contents[i] = contents[i - 1];
+    }
+    contents[0] = data;
+    size_++;
+}
+
+template<typename T>
+void ArrayList<T>::insert_at(const T& data, int index) {
+    full();
+    if (index < 0 || index > max_size_) {
+        throw out_of_range("índice inválido");
+    }
+    contents[index] = data;
+    size_++;
 }
 
 template<typename T>
 void ArrayList<T>::insert(const T& data, int index) {
-    if (full()) {
-        throw out_of_range("lista cheia");
-    } else if (index < 0 || index > size_) {
+    full();
+    if (index < 0 || index > size_) {
         throw out_of_range("índice inválido");
-    } else {
+    }
+    else {
         for (int i = size_; i > index; i--) {
             contents[i] = contents[i-1];
         }
         contents[index] = data;
-        size_++;};
+        size_++;
+    };
 }
 
 template<typename T>
@@ -105,9 +123,11 @@ void ArrayList<T>::insert_sorted(const T& data) {
     if (empty()) {
         push_back(data);
     } else {
-    int i = 0;
-    while (i < static_cast<int>(size_) && contents[i] < data)
-    {i++;} insert(data, i);
+        int i = 0;
+        while (i < size_ && contents[i] < data){
+            i++;
+        }
+        insert(data, i);
     }
 }
 
@@ -161,7 +181,10 @@ void ArrayList<T>::remove(const T& data) {
 
 template<typename T>
 bool ArrayList<T>::full() const {
-    return size() == max_size();
+    if (size() == max_size()) {
+        resize();
+    }
+    return false;
 }
   
 template<typename T>

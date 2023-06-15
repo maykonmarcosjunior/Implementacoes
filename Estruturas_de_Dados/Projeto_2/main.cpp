@@ -3,18 +3,17 @@
 #include <string.h>
 #include "trie.h"
 #include "ArrayList.h"
-#define MAX 100
+#define MAX 200
 
 using namespace std;
 
-void le_arquivo(string filename,
+void le_arquivo(int checado[],
+                string filename,
                 structures::Trie *buscador,
                 structures::ArrayList<string> *saidas,
                 structures::ArrayList<string> *palavras) {
     ifstream arquivo (filename);
     string linha;
-    int checado[palavras->size()];
-    memset(checado, 0, palavras->size());
     if (!arquivo.is_open()) {
         cout << "arquivo inexistente";
         return;
@@ -30,17 +29,15 @@ void le_arquivo(string filename,
             if (continuar) {
                 continue;
             }
-            if (linha[i] == '[')
-            {
+            if (linha[i] == '[') {
                 inicio = start;
             }
-            else if (linha[i] == '[')
-            {
+            else if (linha[i] == '[') {
                 int index = palavras->contains(palavra);
                 if (index == palavras->size()) {
                     continue;
                 }
-                checado[index] = 1;
+                checado[index] = index + 1;
                 int prefixos = buscador->prefixos(palavra);
                 string saidaT = palavra + " is ";
                 if (prefixos) {
@@ -54,7 +51,7 @@ void le_arquivo(string filename,
                 else {
                     saidaT += "not a prefix\n";
                 }
-                saidas->insert(saidaT, index);
+                saidas->push_back(saidaT);
                 continuar = true;
             }
             else
@@ -66,6 +63,7 @@ void le_arquivo(string filename,
     // para as entradas que não formem palavras
     for (int i = 0; i < palavras->size(); ++i) {
         if (!checado[i]) {
+            checado[i] = i + 1;
             string saidaT = palavras->at(i);
             int prefixos = buscador->prefixos(saidaT);
             saidaT += " is ";
@@ -75,7 +73,7 @@ void le_arquivo(string filename,
             } else {
                 saidaT += "not a prefix\n";
             }
-            saidas->insert(saidaT, i);
+            saidas->push_back(saidaT);
         }
     }
 }
@@ -94,9 +92,11 @@ int main() {
         buscador.insert(word);
         palavras.push_back(word);
     }
-    le_arquivo(filename, &buscador, &saidas, &palavras);
+    int checado[palavras.size()];
+    memset(checado, 0, palavras.size());
+    le_arquivo(checado, filename, &buscador, &saidas, &palavras);
     for (int i = 0; i < saidas.size(); ++i) {
-        cout << saidas[i];
+        cout << saidas[checado[i]];
     }
 
     return 0;
