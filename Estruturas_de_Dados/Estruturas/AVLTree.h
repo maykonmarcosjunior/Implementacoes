@@ -1,5 +1,5 @@
 // Copyright [2023] <Maykon Marcos Junior>
-#include "array_list.h"
+#include "ArrayList.h"
 
 namespace structures {
 
