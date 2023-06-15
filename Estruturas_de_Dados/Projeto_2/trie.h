@@ -1,19 +1,23 @@
 // Copyright [2023] <Maykon Marcos Junior>
+#include <string.h>
 #define L 26
-#define Lim 50
+#define LIM 50
+
 namespace structures {
 
-template<typename T>
 class Trie {
 public:
     Trie();
+    
     ~Trie();
 
-    void insert(const T& data);
+    void insert(const char& data);
 
-    void remove(const T& data);
+    void insert_str(const char palavra[]);
 
-    bool contains(const T& data) const;
+    void remove(const char& data);
+
+    bool contains(const char data[]) const;
 
     bool empty() const;
 
@@ -21,14 +25,14 @@ public:
 
 private:
     struct Node {
-        T letra;
+        char letra;
         Node* filhos[L];
         Node* pai;
         int size;
         int posicao;
         int prefixo;
 
-        explicit Node(const T& newData, Node* NewPai) {
+        explicit Node(const char& newData, Node* NewPai) {
             letra = newData;
             pai = NewPai;
             size = 0;
@@ -39,46 +43,8 @@ private:
                 prefixo = pai->prefixo; 
             }
         }
-        
-        bool contains(const T& dado) {
-            for (int i = 0; i < size; ++i) {
-                if (filhos[i]->letra == dado) {
-                    return true;
-                }
-            }
-            return false;
-        }
 
-        void remove(Node* remover, Node* substituto) {
-            if (remover == nullptr || contains(remover->letra)) {
-                return;
-            }
-            for (int i = 0; i < size; i++) {
-                if (filhos[i] == remover) {
-                    if (substituto != nullptr) {
-                        filhos[i] = substituto;
-                    } else {
-                        for (int j = i; j < size-1; j++) {
-                            filhos[j] = filhos[j+1];
-                        }
-                    }
-                    delete remover;
-                }
-            }
-        }
-
-        bool insert(Node* novo) {
-            bool saida = true;
-            if (novo != nullptr && !contains(novo->letra)) {
-                filhos[size] = novo;
-                size++;
-            } else {
-                saida = false;
-            }
-            return saida;
-        }
-
-        Node* find(const T& dado) {
+        Node* find(const char& dado) {
             for (int i = 0; i < size; ++i) {
                 if (filhos[i]->letra == dado) {
                     return filhos[i];
@@ -86,15 +52,26 @@ private:
             }
             return nullptr;
         }
+
+        void insert(Node* novo) {
+            if (novo == nullptr) {
+                return;
+            }
+            auto aux = find(novo->letra);
+            if (aux == nullptr) {
+                filhos[size] = novo;
+                size++;
+            } else {
+                aux->insert(novo);
+            }
+        }
         
-        bool search(T palavra[Lim], T busca[], int posP, int posB) {
-            Node* teste = find(busca[posB]);
+        bool contains(const char palavra[], char busca[], int pos) {
+            Node* teste = find(palavra[pos]);
             if (teste != nullptr) {
-                palavra[posP] = teste->letra;
-                posP++;
-                posB++;
-                teste->search(palavra, busca, posP, posB);
-                return true;
+                busca[pos] = teste->letra;
+                pos++;
+                return teste->contains(palavra, busca, pos);
             }
             return false;
         }
@@ -115,90 +92,55 @@ private:
 
 }  // namespace structures
 
-template<typename T>
-structures::Trie<T>::Trie() {
+structures::Trie::Trie() {
     char temp = ' ';
     root = new Node(temp, nullptr);
     size_ = 0;
 }
 
-template<typename T>
-structures::Trie<T>::~Trie() {
+structures::Trie::~Trie() {
     destructor(root);
 }
 
-template<typename T>
-void structures::Trie<T>::insert(const T& data) {
+void structures::Trie::insert(const char& data) {
     Node *Novo = root, *pai = nullptr;
     while (Novo != nullptr) {
-        if (Novo->data == data) {
-            return;
-        }
         pai = Novo;
         Novo = pai->find(data);
     }
     Novo = new Node(data, pai);
-    pai->insert(Novo, data);
+    pai->insert(Novo);
     size_++;
 }
 
-template<typename T>
-void structures::Trie<T>::remove(const T& data) {
-    if (empty()) {
+void structures::Trie::insert_str(const char palavra[]) {
+    Node *pai = root, *aux = root->find(palavra[0]);
+    int i = 0, max = strlen(palavra);
+    while (aux != nullptr && i < max) {
+        pai = aux;
+        aux = pai->find(palavra[i]);
+        i++;
+    }
+    if (i == max) {
         return;
     }
-    Node *pai = root, *remover = root;
-    while (remover->data != data) {
-        pai = remover;
-        remover = pai->find(data);
-        if (remover == nullptr) {
-            return;
-        }
+    for (;i < max; ++i) {
+        Node* Novo = new Node(palavra[i], pai);
+        pai->insert(Novo);
+        pai = Novo;
+        size_++;
     }
-    Node *substituto = remover, *pai2 = pai;
-    // verifica se é terminal
-    int cond = remover->terminal();
-    if (cond == 1) {  // se for terminal
-        substituto = nullptr;
-    } else if (cond == 2) {  // se o right não for nulo
-        substituto = remover->right;
-    } else if (cond == 3) {  // se left não for nulo
-        substituto = remover->left;
-    } else {
-        substituto = remover->right;
-        while (substituto->left != nullptr) {
-            pai2 = substituto;
-            substituto = substituto->left;
-        }
-        if (substituto != remover->right) {
-            pai2->left = substituto->right;
-            substituto->right = remover->right;
-        }
-        substituto->left = remover->left;
-    }
-    pai->atribui(substituto, data);
-    size_--;
-    delete remover;
 }
 
-template<typename T>
-bool structures::Trie<T>::contains(const T& data) const {
-    auto aux = root;
-    while (aux != nullptr) {
-        if (aux->data == data) {
-            return true;
-        }
-        aux = aux->find(data);
-    }
-    return false;
+bool structures::Trie::contains(const char data[]) const {
+    char busca[LIM];
+    return root->contains(data, busca, 0);
 }
 
-template<typename T>
-bool structures::Trie<T>::empty() const {
+bool structures::Trie::empty() const {
     return size_ == 0;
 }
 
-template<typename T>
-int structures::Trie<T>::size() const {
+int structures::Trie::size() const {
     return size_;
 }

@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <string.h>
 #include "trie.h"
 
 int main() {
     
     using namespace std;
     
-    structures::Trie<char> buscador{};
+    structures::Trie buscador = structures::Trie();
     string filename;
     string word;
 
