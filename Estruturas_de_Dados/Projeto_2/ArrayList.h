@@ -1,6 +1,7 @@
 // Copyright [2023] <Maykon Marcos Junior>
 #include <stdio.h>
 #include <stdexcept>  // C++ Exceptions
+#include <iostream>
 
 using namespace std;
 
@@ -16,8 +17,8 @@ class ArrayList {
     void clear();
     void push_back(const T& data);
     void push_front(const T& data);
-    void insert_at(const T& data, int index);
     void insert(const T& data, int index);
+    void replace(const T& data, int index);
     void insert_sorted(const T& data);
     T pop(int index);
     T pop_back();
@@ -37,16 +38,7 @@ class ArrayList {
     int size_;
     int max_size_;
 
-    static const auto DEFAULT_MAX = 100u;
-    void resize() {
-        max_size_ = 2 * max_size_;
-        T *tempContents = new T[max_size_];
-        for (int i = 0; i < size_; i++) {
-            tempContents[i] = contents[i];
-        }
-        delete[] contents;
-        T *contents = tempContents;
-    }
+    static const auto DEFAULT_MAX = 10u;
 };
 
 }  // namespace structures
@@ -78,44 +70,45 @@ void ArrayList<T>::clear() {
 
 template<typename T>
 void ArrayList<T>::push_back(const T& data) {
-    full();
+    if (full()) {
+        throw out_of_range("lista cheia");
+    } else {
     contents[size_] = data;
-    size_++;
+    size_++;}
 }
 
 template<typename T>
 void ArrayList<T>::push_front(const T& data) {
-    full();
-    for (int i = size_; i > 0; i--) {
-        contents[i] = contents[i - 1];
-    }
-    contents[0] = data;
-    size_++;
-}
-
-template<typename T>
-void ArrayList<T>::insert_at(const T& data, int index) {
-    full();
-    if (index < 0 || index > max_size_) {
-        throw out_of_range("índice inválido");
-    }
-    contents[index] = data;
-    size_++;
+    if (full()) {
+        throw out_of_range("lista cheia");
+    } else {
+    for (int i = static_cast<int>(size_);
+    i > 0; i--) {
+        contents[i] = contents[i-1];
+    } contents[0] = data; size_++;}
 }
 
 template<typename T>
 void ArrayList<T>::insert(const T& data, int index) {
-    full();
-    if (index < 0 || index > size_) {
+    if (full()) {
+        throw out_of_range("lista cheia");
+    } else if (index < 0 || index > size_) {
         throw out_of_range("índice inválido");
-    }
-    else {
+    } else {
         for (int i = size_; i > index; i--) {
             contents[i] = contents[i-1];
         }
         contents[index] = data;
-        size_++;
-    };
+        size_++;};
+}
+
+template<typename T>
+void ArrayList<T>::replace(const T& data, int index) {
+    if (index < 0 || index > size_) {
+        throw out_of_range("índice inválido");
+    }
+    contents[index] = data;
+    size_++;
 }
 
 template<typename T>
@@ -124,7 +117,7 @@ void ArrayList<T>::insert_sorted(const T& data) {
         push_back(data);
     } else {
         int i = 0;
-        while (i < size_ && contents[i] < data){
+        while (i < size_ && contents[i] < data) {
             i++;
         }
         insert(data, i);
@@ -135,14 +128,15 @@ template<typename T>
 T ArrayList<T>::pop(int index) {
     if (empty()) {
         throw out_of_range("lista vazia");
-    } else if (static_cast<int>(index) < 0 || index >= size_) {
+    } else if (index < 0 || index >= size_) {
         throw out_of_range("índice inválido");
     } else {
         T temp = contents[index];
-        for (int i = static_cast<int>(index);
-        i < static_cast<int>(size_) - 1; i++) {
+        for (int i = index; i < size_ - 1; i++) {
             contents[i] = contents[i + 1];
-        } size_--; return temp;
+        }
+        size_--;
+        return temp;
     }
 }
 
@@ -161,17 +155,17 @@ T ArrayList<T>::pop_front() {
         throw out_of_range("lista vazia");
     } else {
         T temp = contents[0];
-        for (int i = 0;
-        i < static_cast<int>(size_) - 1; i++) {
+        for (int i = 0; i < size_ - 1; i++) {
             contents[i] = contents[i + 1];
-        } size_--; return temp;
+        }
+        size_--;
+        return temp;
     }
 }
 
 template<typename T>
 void ArrayList<T>::remove(const T& data) {
-    for (int i = 0;
-    i < static_cast<int>(size_); i++) {
+    for (int i = 0; i < size_; i++) {
         if (contents[i] == data) {
             pop(i);
             break;
@@ -181,15 +175,12 @@ void ArrayList<T>::remove(const T& data) {
 
 template<typename T>
 bool ArrayList<T>::full() const {
-    if (size() == max_size()) {
-        resize();
-    }
-    return false;
+    return size_ == max_size_;
 }
   
 template<typename T>
 bool ArrayList<T>::empty() const {
-    return 0 == static_cast<int>(size_);
+    return 0 == size_;
 }
 
 template<typename T>
@@ -198,7 +189,8 @@ bool ArrayList<T>::contains(const T& data) const {
         if (contents[i] == data) {
             return true;
         }
-    } return false;
+    }
+    return false;
 }
 
 template<typename T>
@@ -207,7 +199,8 @@ int ArrayList<T>::find(const T& data) const {
         if (contents[i] == data) {
             return i;
         }
-    } return size_;
+    }
+    return size_;
 }
 
 template<typename T>
