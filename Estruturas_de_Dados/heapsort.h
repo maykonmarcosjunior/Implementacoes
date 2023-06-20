@@ -5,7 +5,7 @@ reorganizadas para que pais sejam maiores que filhos,
 depois a raiz é substituída com uma das pontas,
 reiterando o processo até o final 
 */
-#define pai(i) ((i)-1)/2
+#define pai(i) (((i)-1)/2)
 
 template<typename T>
 void heapsort(T arr[], int n) {
@@ -28,7 +28,7 @@ void heapsort(T arr[], int n) {
             }
         }
     }
- 
+
     for (int i = n - 1; i > 0; i--) {
         // swap value of first indexed
         // with last indexed
@@ -47,14 +47,14 @@ void heapsort(T arr[], int n) {
             // if left child is smaller than
             // right child point index variable
             // to right child
-            int cond = (arr[index] < arr[index + 1] && index < (i - 1));
+            int cond = (index < (i - 1) && arr[index] < arr[index + 1]);
             index += cond;
 
             // if parent is smaller than child
             // then swapping parent with child
             // having higher value
             T temp_v[] = {arr[j], arr[index]};
-            cond = arr[j] < arr[index] && index < i;
+            cond = (index < i && arr[j] < arr[index]);
             arr[j] = temp_v[cond];
             arr[index] = temp_v[!cond];
 
