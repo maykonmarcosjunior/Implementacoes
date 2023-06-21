@@ -10,7 +10,7 @@ public:
     
     ~Trie();
 
-    void insert(std::string palavra, int inicio, int N);
+    void insert(std::string palavra, const int inicio, const int N);
 
     bool contains(std::string palavra) const;
 
@@ -72,11 +72,11 @@ private:
             }
             return false;
         }
-        void prefix(std::string palavra, int* saida, int N) {
-            if (posicao < N) {
+        void prefix(std::string palavra, int* saida, int SIZE) {
+            if (posicao < SIZE) {
                 Node* teste = find(palavra[posicao]);
                 if (teste != nullptr) {
-                    teste->prefix(palavra, saida, N);
+                    teste->prefix(palavra, saida, SIZE);
                 } else {
                     saida[0] = saida[1] = 0;
                     saida[2] = saida[3] = 0;
@@ -115,7 +115,7 @@ structures::Trie::Trie() {
 structures::Trie::~Trie() {
     destructor(root);
 }
-void structures::Trie::insert(std::string palavra, int inicio, int N) {
+void structures::Trie::insert(std::string palavra, const int inicio, const int N) {
     Node *pai = root, *Novo = root->find(palavra[0]);
     int i = 1, max = static_cast<int>(palavra.length());
     // verificando quais letras já estão lá
