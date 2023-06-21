@@ -45,9 +45,9 @@ int main() {
     string filename, word;
     cin >> filename; // entrada
     le_arquivo(filename, &buscador);
-    // leitura das palavras até encontrar "0"
     int vetor[4] = {0, 0, 0, 0};
     int prefixos = 0, inicio = 0, N = 0, is_word = 0;
+    // leitura das palavras até encontrar "0"
     while (1) {
         cin >> word;
         if (word.compare("0") == 0) {
