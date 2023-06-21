@@ -10,11 +10,11 @@ public:
     
     ~Trie();
 
-    void insert(std::string palavra);
+    void insert(std::string palavra, int inicio, int N);
 
     bool contains(std::string palavra) const;
 
-    bool prefixos(std::string palavra) const;
+    int* prefixos(std::string palavra) const;
 
     bool empty() const;
 
@@ -25,40 +25,36 @@ private:
         char letra;
         Node* filhos[L];
         Node* pai;
-        int size;
         int posicao;
         int prefixos;
-        bool is_word;
+        int inicio;
+        int N;
+        int is_word;
 
         explicit Node(const char& newData, Node* NewPai) {
             letra = newData;
             pai = NewPai;
-            size = 0;
-            is_word = false;
+            inicio = 0;
+            N = 0;
+            is_word = 0;
             posicao = (pai == nullptr) ? 0 : pai->posicao + 1;
             prefixos = (pai == nullptr)? 0 : pai->prefixos;
+            for (int i = 0; i < L; ++i) {
+                filhos[i] = nullptr;
+            }
         }
 
         Node* find(const char& dado) {
-            for (int i = 0; i < size; ++i) {
-                if (filhos[i]->letra == dado) {
-                    return filhos[i];
-                }
-            }
-            return nullptr;
+            int i = dado - 'a';
+            return filhos[i];
         }
 
         void insert(Node* novo) {
             if (novo == nullptr) {
                 return;
             }
-            auto aux = find(novo->letra);
-            if (aux == nullptr) {
-                filhos[size] = novo;
-                size++;
-            } else {
-                aux->insert(novo);
-            }
+            int i = novo->letra - 'a';
+            filhos[i] = novo;
         }
         void pref_update() {
             prefixos++;
@@ -76,21 +72,27 @@ private:
             }
             return false;
         }
-        int prefix(std::string palavra) {
-            if (posicao == static_cast<int>(palavra.length())) {
-                return prefixos;
+        void prefix(std::string palavra, int* saida, int N) {
+            if (posicao < N) {
+                Node* teste = find(palavra[posicao]);
+                if (teste != nullptr) {
+                    teste->prefix(palavra, saida, N);
+                } else {
+                    saida[0] = saida[1] = 0;
+                    saida[2] = saida[3] = 0;
+                }
+            } else {
+                saida[0] = prefixos;
+                saida[1] = inicio;
+                saida[2] = N;
+                saida[3] = is_word;
             }
-            Node* teste = find(palavra[posicao]);
-            if (teste != nullptr) {
-                return teste->prefix(palavra);
-            }
-            return 0;
         }
     };
 
     void destructor(Node* Nodo) {
         if (Nodo != nullptr) {
-            for (int i = 0; i < Nodo->size; i++) {
+            for (int i = 0; i < L; i++) {
                 destructor(Nodo->filhos[i]);
             }
             delete Nodo;
@@ -113,32 +115,40 @@ structures::Trie::Trie() {
 structures::Trie::~Trie() {
     destructor(root);
 }
-void structures::Trie::insert(std::string palavra) {
-    Node *pai = root, *aux = root->find(palavra[0]);
-    int i = 0, max = static_cast<int>(palavra.length());
+void structures::Trie::insert(std::string palavra, int inicio, int N) {
+    Node *pai = root, *Novo = root->find(palavra[0]);
+    int i = 1, max = static_cast<int>(palavra.length());
     // verificando quais letras já estão lá
-    while (aux != nullptr && i < max) {
-        pai = aux;
-        aux = pai->find(palavra[i]);
+    while (Novo != nullptr && i < max) {
+        pai = Novo;
+        Novo = pai->find(palavra[i]);
         i++;
     }
     // significa que palavra é 
     // um prefixo já inserido
     if (i == max) {
+        pai->inicio = inicio;
+        pai->N = N;
+        if (pai->is_word) {
+            return;
+        }
+        pai->is_word = true;
+        pai->pref_update();
         return;
     }
+    i--;
     // caso contrário
     // deve-se inserir
     // as letras restantes
-    Node *Novo;
     for (; i < max; ++i) {
-        Novo = new Node(palavra[i],
-                        pai);
+        Novo = new Node(palavra[i], pai);
         pai->insert(Novo);
         pai = Novo;
         size_++;
     }
-    Novo->is_word = true;
+    Novo->inicio = inicio;
+    Novo->N = N;
+    Novo->is_word = 1;
     Novo->pref_update();
 }
 
@@ -146,8 +156,11 @@ bool structures::Trie::contains(std::string palavra) const {
     return root->contains(palavra);
 }
 
-bool structures::Trie::prefixos(std::string palavra) const {
-    return root->prefix(palavra);
+int* structures::Trie::prefixos(std::string palavra) const {
+    int *saida = new int[4];
+    int N = static_cast<int>(palavra.length());
+    root->prefix(palavra, saida, N);
+    return saida;
 }
 
 bool structures::Trie::empty() const {
