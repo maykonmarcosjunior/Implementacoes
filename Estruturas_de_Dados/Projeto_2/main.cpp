@@ -46,13 +46,14 @@ int main() {
     cin >> filename; // entrada
     le_arquivo(filename, &buscador);
     // leitura das palavras até encontrar "0"
+    int vetor[4] = {0, 0, 0, 0};
     int prefixos = 0, inicio = 0, N = 0, is_word = 0;
     while (1) {
         cin >> word;
         if (word.compare("0") == 0) {
             break;
         }
-        int *vetor = buscador.prefixos(word);
+        buscador.prefixos(word, vetor);
         prefixos = vetor[0];
         inicio = vetor[1];
         N = vetor[2];
@@ -69,7 +70,6 @@ int main() {
             saidaT += ',' + to_string(N) + ")\n";
         }
         cout << saidaT;
-        delete vetor;
     }
 
     return 0;

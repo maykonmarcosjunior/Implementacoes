@@ -14,7 +14,7 @@ public:
 
     bool contains(std::string palavra) const;
 
-    int* prefixos(std::string palavra) const;
+    void prefixos(std::string palavra, int saida[4]) const;
 
     bool empty() const;
 
@@ -38,7 +38,7 @@ private:
             N = 0;
             is_word = 0;
             posicao = (pai == nullptr) ? 0 : pai->posicao + 1;
-            prefixos = (pai == nullptr)? 0 : pai->prefixos;
+            prefixos = 0;
             for (int i = 0; i < L; ++i) {
                 filhos[i] = nullptr;
             }
@@ -156,11 +156,9 @@ bool structures::Trie::contains(std::string palavra) const {
     return root->contains(palavra);
 }
 
-int* structures::Trie::prefixos(std::string palavra) const {
-    int *saida = new int[4];
+void structures::Trie::prefixos(std::string palavra, int saida[4]) const {
     int N = static_cast<int>(palavra.length());
     root->prefix(palavra, saida, N);
-    return saida;
 }
 
 bool structures::Trie::empty() const {
