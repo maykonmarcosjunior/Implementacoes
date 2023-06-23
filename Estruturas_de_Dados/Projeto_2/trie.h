@@ -20,8 +20,6 @@ public:
 
     int size() const;
 
-    char* in_order() const;
-
 private:
     struct Node {
         char letra;
@@ -43,21 +41,6 @@ private:
             prefixos = 0;
             for (int i = 0; i < L; ++i) {
                 filhos[i] = nullptr;
-            }
-        }
-        void in_order(char* v, int k) const {
-            for (int i = 0; i < L/2; ++i) {
-                if (filhos[i] != nullptr) {
-                    filhos[i]->in_order(v, k);
-                    k++;
-                }
-            }
-            v[k] = letra;
-            for (int i = 0; i < L / 2; ++i) {
-                if (filhos[i] != nullptr) {
-                    k++;
-                    filhos[i]->in_order(v, k);
-                }
             }
         }
         
@@ -182,12 +165,4 @@ bool structures::Trie::empty() const {
 
 int structures::Trie::size() const {
     return size_;
-}
-// visita a subarvore esquerda, a raiz, e a direita
-char* structures::Trie::in_order() const {
-    char* v = new char[size_];
-    if (root != nullptr) {
-        root->in_order(v, 0);
-    }
-    return v;
 }
