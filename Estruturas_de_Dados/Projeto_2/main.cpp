@@ -3,7 +3,6 @@
 #include <sstream>
 #include <string>
 #include "trie.h"
-#define MAX 200
 
 using namespace std;
 
@@ -42,9 +41,10 @@ void le_arquivo(string filename,
 int main() {
     
     structures::Trie buscador = structures::Trie();
-    string filename, word;
+    string filename;
     cin >> filename; // entrada
     le_arquivo(filename, &buscador);
+    string word;
     int vetor[4] = {0, 0, 0, 0};
     int prefixos = 0, inicio = 0, N = 0, is_word = 0;
     // leitura das palavras até encontrar "0"
@@ -63,7 +63,7 @@ int main() {
             saidaT += "prefix of " + to_string(prefixos);
             saidaT += " words\n";
         } else {
-            saidaT += "not a prefix\n";
+            saidaT += "not prefix\n";
         }
         if (is_word) {
             saidaT += word + " is at (" + to_string(inicio);
