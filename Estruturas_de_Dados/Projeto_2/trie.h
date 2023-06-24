@@ -125,20 +125,19 @@ void structures::Trie::insert(std::string palavra, int inicio, int N) {
         pai = Novo;
         Novo = pai->find(palavra[i]);
     }
-    // se a palavra já foi inserida
-    if (i == max && pai->is_word) {
-        return;
+    // se a palavra não foi inserida
+    if (i < max || !pai->is_word) {
+        for (; i < max; ++i) {
+            Novo = new Node(palavra[i], pai);
+            pai->insert(Novo);
+            pai = Novo;
+            size_++;
+        }
+        pai->inicio = inicio;
+        pai->N = N;
+        pai->is_word = 1;
+        pai->pref_update();
     }
-    for (; i < max; ++i) {
-        Novo = new Node(palavra[i], pai);
-        pai->insert(Novo);
-        pai = Novo;
-        size_++;
-    }
-    pai->inicio = inicio;
-    pai->N = N;
-    pai->is_word = 1;
-    pai->pref_update();
 }
 
 bool structures::Trie::contains(std::string palavra) const {
