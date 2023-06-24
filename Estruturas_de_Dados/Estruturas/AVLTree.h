@@ -123,10 +123,9 @@ private:
             // B->right = A
             B->insert(this, data);
             // B->pai = paiA
+            B->pai = nullptr;
             if (paiA != nullptr) {
                 paiA->insert(B, B->data);
-            } else {
-                B->pai = nullptr;
             }
         }
         void simpleRight() {
@@ -137,10 +136,9 @@ private:
             // B->left = A
             B->insert(this, data);
             // B->pai = paiA
+            B->pai = nullptr;
             if (paiA != nullptr) {
                 paiA->insert(B, B->data);
-            } else {
-                B->pai = nullptr;
             }
         }
         void doubleLeft() {
