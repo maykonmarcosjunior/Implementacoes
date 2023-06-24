@@ -125,6 +125,10 @@ void structures::Trie::insert(std::string palavra, int inicio, int N) {
         pai = Novo;
         Novo = pai->find(palavra[i]);
     }
+    // se a palavra já foi inserida
+    if (i == max && pai->is_word) {
+        return;
+    }
     for (; i < max; ++i) {
         Novo = new Node(palavra[i], pai);
         pai->insert(Novo);
