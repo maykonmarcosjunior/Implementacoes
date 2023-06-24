@@ -8,10 +8,11 @@ void le_arquivo(std::string filename,
                 structures::Trie *buscador) {
     std::ifstream arquivo (filename);
     std::string linha;
-    int start = -1, inicio;
+    int start = -1;
     while (getline(arquivo, linha)) {
         std::string palavra = "";
         int N = linha.length();
+        int inicio;
         for (int i = 0; i < N; ++i) {
             // contador de posições
             start++;
@@ -69,4 +70,4 @@ int main() {
     }
 
     return 0;
-}
+}   
