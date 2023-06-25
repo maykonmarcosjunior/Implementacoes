@@ -46,7 +46,7 @@ private:
         
         Node* find(const char& dado) {
             int i = dado - 'a';
-            return filhos[i];
+            return filhos[i%L];
         }
 
         void insert(Node* novo) {
@@ -123,7 +123,7 @@ void structures::Trie::insert(std::string palavra, int inicio, int N) {
     while (Novo != nullptr && i < max) {
         i++;
         pai = Novo;
-        Novo = pai->find(palavra[i]);
+        Novo = pai->find(palavra[i%max]);
     }
     // se a palavra não foi inserida
     if (i < max || !pai->is_word) {
