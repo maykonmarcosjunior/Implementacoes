@@ -1,12 +1,11 @@
-// C Program for counting sort
 /*
-Só funciona para valores que podem ser mapeados para inteiros (por exemplo, se for
-racional, que se possa transformar em inteiro multiplicando por uma potência de 10)
-É linear se RANGE E O(n), se não O(n+k)
+elementos podem ser mapeados para inteiros e cada elemento
+pode ser representado por um número constante de dígitos
+Precisa de outro método de ordenação estável, que organize
+o vetor primeiro pelo LSB, depois pelo dígito seguinte e
+assim até o MSB, qunado vai estar tudo organizado
 */
- 
-// The main function that sort the given string arr[] in
-// alphabetical order
+
 template<typename T>
 void countsort(T arr[], int size, int RANGE) {
     // The output character array that will have sorted arr
@@ -42,4 +41,12 @@ void countsort(T arr[], int size, int RANGE) {
     for (int i = 0; i < size; ++i) {
         arr[i] = output[i];
     }
+}
+
+// RANGE nesse caso será dos dígitos,
+// não do vetor, então, se for de inteiros
+// por exemplo, será 9
+template<typename T>
+void radixsort(T vetor, int size, int RANGE) {
+    
 }
