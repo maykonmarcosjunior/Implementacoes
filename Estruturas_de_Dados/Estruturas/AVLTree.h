@@ -26,6 +26,14 @@ public:
 
     structures::ArrayList<T> post_order() const;
 
+    int leaves();
+
+    T* limits();
+
+    AVLTree<T> clone();
+
+    void filter(int n_child);
+
 private:
     struct Node {
         T data;
@@ -54,32 +62,45 @@ private:
             return altR;
         }
         
-        void pre_order(ArrayList<T>* v) const {
-            v->push_back(data);
+        // visita a raiz, a subarvore esquerda e depois a direita
+        void pre_order(ArrayList<T>& v) const {
+            v.push_back(data);
             if (left) {
                 left->pre_order(v);
             }
-            if (right != nullptr) {
+            if (right) {
                 right->pre_order(v);
             }
         }
-        void in_order(ArrayList<T>* v) const {
+        // visita a subarvore esquerda, a raiz, e a direita
+        void in_order(ArrayList<T>& v) const {
             if (left) {
                 left->in_order(v);
             }
-            v->push_back(data);
+            v.push_back(data);
             if (right) {
                 right->in_order(v);
             }
         }
-        void post_order(ArrayList<T>* v) const {
+        // subarvore esquerda, direita e depois a raiz
+        void post_order(ArrayList<T>& v) const {
             if (left) {
                 left->post_order(v);
             }
             if (right) {
                 right->post_order(v);
             }
-            v->push_back(data);
+            v.push_back(data);
+        }
+        // Copia a árvore
+        void clone(AVLTree<T>& C) const {
+            C.insert(data);
+            if (left) {
+                left->clone(C);
+            }
+            if (right) {
+                right->clone(C);
+            }
         }
         // retorna 0 se tiver subárvores
         // esquerdas e direitas,
@@ -190,6 +211,18 @@ private:
             }
         }
     };
+    // elimina nodos com n_child filhos
+    void subfilter(int n_child, Node* raiz) {
+        if (!raiz) {
+            return;
+        }
+        int filhos = 2 - !raiz->left - !raiz->right;
+        if (n_child == filhos) {
+            remove(raiz);
+        }
+        subfilter(n_child, raiz->left);
+        subfilter(n_child, raiz->right);
+    }
 
     Node* root = nullptr;
     std::size_t size_;
@@ -200,6 +233,56 @@ private:
 template<typename T>
 structures::AVLTree<T>::~AVLTree() {
     delete root;
+}
+
+// conta o número de nodos folha
+template<typename T>
+int structures::AVLTree<T>::leaves() {
+    return root->leaves();
+}
+
+// retorna uma lista com o menor
+// (mínimo) e o maior (máximo)
+// valor da árvore:
+template<typename T>
+T* structures::AVLTree<T>::limits() {
+    T saida[2] = {NULL, NULL};
+    if (empty()) {
+        return saida;
+    }
+    bool LL = true, RR = true;
+    Node *auxL = root, *auxR = root;
+    Node* vetL[2] = {root, root->left};
+    Node* vetR[2] = {root, root->right};
+    while (LL || RR) {
+        // se auxL->left não for nulo,
+        // auxL vira auxL->left
+        LL = auxL->left;
+        auxL = vetL[LL];
+        vetL[0] = auxL;
+        vetL[1] = auxL->left;
+        // ser auxR->right não for nulo,
+        // auxR vira auxR->right
+        RR = auxR->right;
+        auxR = vetR[RR];
+        vetR[0] = auxR;
+        vetR[1] = auxR->right;
+    }
+    saida[0] = vetL[0]->data;
+    saida[1] = vetR[0]->data;
+    return saida;
+}
+
+template<typename T>
+AVLTree<T> structures::AVLTree<T>::clone() {
+    AVLTree<T> C;
+    root->clone(C);
+    return C;
+}
+
+template<typename T>
+void structures::AVLTree<T>::filter(int n_child) {
+    subfilter(n_child, root);
 }
 
 template<typename T>
@@ -296,7 +379,7 @@ template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::pre_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->pre_order(&v);
+        root->pre_order(v);
     }
     return v;
 }
@@ -305,7 +388,7 @@ template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::in_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->in_order(&v);
+        root->in_order(v);
     }
     return v;
 }
@@ -314,7 +397,7 @@ template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::post_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->post_order(&v);
+        root->post_order(v);
     }
     return v;
 }

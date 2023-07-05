@@ -24,28 +24,16 @@ public:
 
     structures::ArrayList<T> post_order() const;
 
-    //******************************************************************
-    // Prova prática - implementações necessárias:
-
-    // (1) determinação da altura da árvore:
     int height();
 
-    // (2) contagem do número de folhas:
     int leaves();
 
-    // (3) criação de uma lista com o menor (mínimo) e o maior (máximo)
-    //     valor da árvore:
     ArrayList<T> limits();
 
-    // (4) criação de uma duplicação, em memória, da árvore:
     BinaryTree<T> clone();
 
-    // (5) remove nós pelo número de seus filhos:
     void filter(int n_child);
 
-    // (6) criação de um nova árvore que tenha todos os valores e a
-    //     menor altura possível, ou seja, balanceada com base apenas
-    //     no estabelecimento de uma nova ordem de inserção:
     BinaryTree<T> balance();
 
 private:
@@ -63,32 +51,45 @@ private:
             delete left;
             delete right;
         }
-        void pre_order(ArrayList<T>* v) const {
-            v->push_back(data);
+        // visita a raiz, a subarvore esquerda e depois a direita
+        void pre_order(ArrayList<T>& v) const {
+            v.push_back(data);
             if (left) {
                 left->pre_order(v);
             }
-            if (right != nullptr) {
+            if (right) {
                 right->pre_order(v);
             }
         }
-        void in_order(ArrayList<T>* v) const {
+        // visita a subarvore esquerda, a raiz, e a direita
+        void in_order(ArrayList<T>& v) const {
             if (left) {
                 left->in_order(v);
             }
-            v->push_back(data);
+            v.push_back(data);
             if (right) {
                 right->in_order(v);
             }
         }
-        void post_order(ArrayList<T>* v) const {
+        // subarvore esquerda, direita e depois a raiz
+        void post_order(ArrayList<T>& v) const {
             if (left) {
                 left->post_order(v);
             }
             if (right) {
                 right->post_order(v);
             }
-            v->push_back(data);
+            v.push_back(data);
+        }
+        // Copia a árvore
+        void clone(BinaryTree<T>& C) const {
+            C.insert(data);
+            if (left) {
+                left->clone(C);
+            }
+            if (right) {
+                right->clone(C);
+            }
         }
         // centraliza a inserção
         void insert(Node* novo, const T& dataNew) {
@@ -122,10 +123,33 @@ private:
         // contando só as folhas
         int leaves() {
             int saida = (left)? left->leaves() : 1;
-            int saida += (right)? right->leaves() : 0;
+            saida += (right)? right->leaves() : 0;
             return saida;
         }
     };
+    // elimina nodos com n_child filhos
+    void subfilter(int n_child, Node* raiz) {
+        if (!raiz) {
+            return;
+        }
+        int filhos = 2 - !raiz->left - !raiz->right;
+        if (n_child == filhos) {
+            remove(raiz);
+        }
+        subfilter(n_child, raiz->left);
+        subfilter(n_child, raiz->right);
+    }
+    // insere os elementos ordenamente
+    void balance_tree(BinaryTree<T>& B, int start,
+                      int end, ArrayList<T>& lista) {
+        if (start <= end) {
+            // é necessário particionar a lista
+            int meio = (start + end) / 2;
+            B.insert(lista[meio]);
+            balance_tree(B, start, meio - 1, lista);
+            balance_tree(B, meio + 1, end, lista);
+        }
+    }
 
     Node* root = nullptr;
     std::size_t size_ = 0u;
@@ -138,63 +162,73 @@ structures::BinaryTree<T>::~BinaryTree() {
     delete root;
 }
 
+// altura da árvore
 template<typename T>
 int structures::BinaryTree<T>::height() {
-    return root->height();
+    return root? root->height() : -1;
 }
 
-// (2) contagem do número de folhas:
+// contagem do número de folhas:
 template<typename T>
 int structures::BinaryTree<T>::leaves() {
     return root->leaves();
 }
 
-// (3) criação de uma lista com o menor (mínimo) e o maior (máximo)
-//     valor da árvore:
+// retorna uma lista com o menor
+// (mínimo) e o maior (máximo)
+// valor da árvore:
 template<typename T>
 ArrayList<T> structures::BinaryTree<T>::limits() {
     ArrayList<T> saida{2};
-    bool LL = true, RR = true;
-    if (!empty()) {
-        Node *auxL = root, *auxR = root;
-        while (LL || RR) {
-            if (auxL->left) {
-                auxL = auxL->left;
-            }
-            else if (LL) {
-                saida.push_front(auxL->data);
-                LL = false;
-            }
-            if (auxR->right) {
-                auxR = auxR->right;
-            }
-            else if (RR) {
-                saida.push_back(auxR->data);
-                RR = false;
-            }
-        }
+    if (empty()) {
+        return saida;
     }
+    bool LL = true, RR = true;
+    Node *auxL = root, *auxR = root;
+    Node* vetL[2] = {root, root->left};
+    Node* vetR[2] = {root, root->right};
+    while (LL || RR) {
+        // se auxL->left não for nulo,
+        // auxL vira auxL->left
+        LL = auxL->left;
+        auxL = vetL[LL];
+        vetL[0] = auxL;
+        vetL[1] = auxL->left;
+        // ser auxR->right não for nulo,
+        // auxR vira auxR->right
+        RR = auxR->right;
+        auxR = vetR[RR];
+        vetR[0] = auxR;
+        vetR[1] = auxR->right;
+    }
+    saida.push_back(vetR[0]->data);
+    saida.pop_back(vetR[0]->data);
     return saida;
 }
 
-// (4) criação de uma duplicação, em memória, da árvore:
+// criação de uma duplicação, em memória, da árvore:
 template<typename T>
 BinaryTree<T> structures::BinaryTree<T>::clone() {
-
+    BinaryTree<T> C;
+    root->clone(C);
+    return C;
 }
 
-// (5) remove nós pelo número de seus filhos:
+// remove nós pelo número de seus filhos:
 template<typename T>
 void structures::BinaryTree<T>::filter(int n_child) {
-
+    subfilter(n_child, root);
 }
 
-// (6) criação de um nova árvore que tenha todos os valores e a
-//     menor altura possível, ou seja, balanceada com base apenas
-//     no estabelecimento de uma nova ordem de inserção:
+// criação de um nova árvore que tenha todos os valores e a
+// menor altura possível, ou seja, balanceada com base apenas
+// no estabelecimento de uma nova ordem de inserção:
 template<typename T>
 BinaryTree<T> structures::BinaryTree<T>::balance() {
-    
+    ArrayList<T> lista = in_order();
+    BinaryTree<T> B;
+    std::size_t inicio = 0, fim = size_ - 1;
+    balance_tree(B, inicio, fim, lista);
 }
 
 template<typename T>
@@ -284,7 +318,7 @@ template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::pre_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->pre_order(&v);
+        root->pre_order(v);
     }
     return v;
 }
@@ -293,7 +327,7 @@ template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::in_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->in_order(&v);
+        root->in_order(v);
     }
     return v;
 }
@@ -302,7 +336,7 @@ template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::post_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
     if (root) {
-        root->post_order(&v);
+        root->post_order(v);
     }
     return v;
 }
