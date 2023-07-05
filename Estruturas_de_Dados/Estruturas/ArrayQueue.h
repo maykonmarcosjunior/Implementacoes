@@ -20,7 +20,11 @@ class ArrayQueue {
     void enqueue(const T& data);
     //! metodo desenfileirar
     T dequeue();
-    //! metodo retorna o ultimo
+    // retorna o primeiro
+    // dado inserido
+    T& front();
+    // retorna o ultimo
+    // dado inserido
     T& back();
     //! metodo limpa a fila
     void clear();
@@ -89,6 +93,15 @@ T structures::ArrayQueue<T>::dequeue() {
 
 template<typename T>
 T& structures::ArrayQueue<T>::back() {
+    if (empty()) {
+        throw std::out_of_range("fila vazia");
+    } else {
+        return contents[end];
+    }
+}
+
+template<typename T>
+T& structures::ArrayQueue<T>::front() {
     if (empty()) {
         throw std::out_of_range("fila vazia");
     } else {
