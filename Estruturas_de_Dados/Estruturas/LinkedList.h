@@ -48,31 +48,26 @@ class LinkedList {
  private:
     class Node {  // Elemento
      public:
-        explicit Node(const T& data):
-            data_{data}
-        {}
-
-        Node(const T& data, Node* next):
-            data_{data},
-            next_{next}
-        {}
-
+        explicit Node(const T& newData) {
+            data_ = newData;
+            next_ = nullptr;
+        }
+        Node(const T &data, Node *next) {
+            data_ = data;
+            next_ = next;
+        }
         T& data() {  // getter: dado
             return data_;
         }
-
         const T& data() const {  // getter const: dado
             return data_;
         }
-
         Node* next() {  // getter: próximo
             return next_;
         }
-
         const Node* next() const {  // getter const: próximo
             return next_;
         }
-
         void next(Node* node) {  // setter: próximo
             next_ = node;
         }
@@ -104,12 +99,11 @@ structures::LinkedList<T>::LinkedList() {}
 template<typename T>
 structures::LinkedList<T>::~LinkedList() {
     clear();
-    delete head;
 }
 
 template<typename T>
 void structures::LinkedList<T>::clear() {
-    while (static_cast<int>(size_) > 0) {
+    while (size_) {
         pop_front();
     }
     head = nullptr;
@@ -121,7 +115,7 @@ void structures::LinkedList<T>::push_back(const T& data) {
     if (empty()) {
         head = Elemento;
     } else {
-    end()->next(Elemento);
+        end()->next(Elemento);
     }
     size_++;
 }
@@ -162,8 +156,8 @@ void structures::LinkedList<T>::insert_sorted(const T& data) {
         push_back(data);
     } else {
         auto i = head;
-        int k = 1;
-        while (k <= static_cast<int>(size_) && i->data() < data) {
+        std::size_t k = 1;
+        while (k <= size_ && i->data() < data) {
             i = i->next();
             k++;
         }
@@ -180,7 +174,7 @@ T structures::LinkedList<T>::pop(size_t index) {
         throw std::out_of_range("índice inválido");
     } else {
         Node *it = head;
-        for (int i = 1; i < static_cast<int>(index); ++i) {
+        for (std::size_t i = 1; i < index; ++i) {
             it = it->next();
         }
         auto temp = it->next();
@@ -197,14 +191,20 @@ T structures::LinkedList<T>::pop_back() {
     if (empty()) {
         throw std::out_of_range("lista vazia");
     } else {
-        auto it = head;
-        for (int i = 1; i < static_cast<int>(size_); ++i) {
+        Node* it = head;
+        for (std::size_t i = 1; i < size_ - 1; ++i) {
             it = it->next();
         }
-        T temp = (*it).data();
-        delete it;
+        Node* remover = it->next();
+        if (!remover) {
+            remover = it;
+        }
+        it->next(nullptr);
+        T saida = remover->data();
+        remover->next(nullptr);
         size_--;
-        return temp;
+        delete remover;
+        return saida;
     }
 }
 
@@ -213,24 +213,23 @@ T structures::LinkedList<T>::pop_front() {
     if (empty()) {
         throw std::out_of_range("lista vazia");
     } else {
-        auto temp = head;
-        T temp2 = temp->data();
+        Node* temp = head;
+        T saida = temp->data();
         head = head->next();
         delete temp;
         size_--;
-        return temp2;
+        return saida;
     }
 }
 
 template<typename T>
 void structures::LinkedList<T>::remove(const T& data) {
-    size_t i = find(data);
-    pop(i);
+    pop(find(data));
 }
 
 template<typename T>
 bool structures::LinkedList<T>::empty() const {
-    return 0 == static_cast<int>(size_);
+    return !size_;
 }
 
 template<typename T>
@@ -240,9 +239,9 @@ bool structures::LinkedList<T>::contains(const T& data) const {
 
 template<typename T>
 size_t structures::LinkedList<T>::find(const T& data) const {
-    auto it = head;
-    for (int i = 0; i < static_cast<int>(size_); i++) {
-        if ((*it).data() == data) {
+    Node* it = head;
+    for (std::size_t i = 0; i < size_; i++) {
+        if (it->data() == data) {
             return i;
         }
         it = it->next();
@@ -259,10 +258,10 @@ T& structures::LinkedList<T>::at(size_t index) {
     if (static_cast<int>(index) < 0 || index >= size_) {
         throw std::out_of_range("índice inválido");
     } else {
-        auto it = head;
-        for (int i = 1; i <= static_cast<int>(index); i++) {
+        Node* it = head;
+        for (std::size_t i = 1; i <= index; i++) {
             it = it->next();
         }
-        return (*it).data();
+        return it->data();
     }
 }
