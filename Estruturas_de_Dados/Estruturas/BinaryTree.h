@@ -65,7 +65,7 @@ private:
         }
         void pre_order(ArrayList<T>* v) const {
             v->push_back(data);
-            if (left != nullptr) {
+            if (left) {
                 left->pre_order(v);
             }
             if (right != nullptr) {
@@ -73,34 +73,34 @@ private:
             }
         }
         void in_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
+            if (left) {
                 left->in_order(v);
             }
             v->push_back(data);
-            if (right != nullptr) {
+            if (right) {
                 right->in_order(v);
             }
         }
         void post_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
+            if (left) {
                 left->post_order(v);
             }
-            if (right != nullptr) {
+            if (right) {
                 right->post_order(v);
             }
             v->push_back(data);
         }
+        // centraliza a inserção
         void insert(Node* novo, const T& dataNew) {
             Node **vet[2] = {&right, &left};
-            int cond = data > dataNew;
-            *(vet[cond]) = novo;
+            *(vet[data > dataNew]) = novo;
         }
         // para percorrer a lista
         // buscando um elemento
+        // iterativamente
         Node* avanca(const T& dataNew) {
             Node* vet[2] = {right, left};
-            int cond = data > dataNew;
-            return vet[cond];
+            return vet[data > dataNew];
         }
         // retorna 0 se tiver subárvores
         // esquerdas e direitas,
@@ -111,6 +111,19 @@ private:
             int cE = left != nullptr;
             int cR = right != nullptr;
             return 2*cE + cR + 1 - 4*cE*cR;
+        }
+        // encontrando a altura
+        int height() {
+            int HL = (left)? left->leaves() : -1;
+            int HR = (right)? right->leaves() : -1;
+            int saida = (HR > HL) ? HR : HL;
+            return saida + 1;
+        }
+        // contando só as folhas
+        int leaves() {
+            int saida = (left)? left->leaves() : 1;
+            int saida += (right)? right->leaves() : 0;
+            return saida;
         }
     };
 
@@ -126,17 +139,76 @@ structures::BinaryTree<T>::~BinaryTree() {
 }
 
 template<typename T>
+int structures::BinaryTree<T>::height() {
+    return root->height();
+}
+
+// (2) contagem do número de folhas:
+template<typename T>
+int structures::BinaryTree<T>::leaves() {
+    return root->leaves();
+}
+
+// (3) criação de uma lista com o menor (mínimo) e o maior (máximo)
+//     valor da árvore:
+template<typename T>
+ArrayList<T> structures::BinaryTree<T>::limits() {
+    ArrayList<T> saida{2};
+    bool LL = true, RR = true;
+    if (!empty()) {
+        Node *auxL = root, *auxR = root;
+        while (LL || RR) {
+            if (auxL->left) {
+                auxL = auxL->left;
+            }
+            else if (LL) {
+                saida.push_front(auxL->data);
+                LL = false;
+            }
+            if (auxR->right) {
+                auxR = auxR->right;
+            }
+            else if (RR) {
+                saida.push_back(auxR->data);
+                RR = false;
+            }
+        }
+    }
+    return saida;
+}
+
+// (4) criação de uma duplicação, em memória, da árvore:
+template<typename T>
+BinaryTree<T> structures::BinaryTree<T>::clone() {
+
+}
+
+// (5) remove nós pelo número de seus filhos:
+template<typename T>
+void structures::BinaryTree<T>::filter(int n_child) {
+
+}
+
+// (6) criação de um nova árvore que tenha todos os valores e a
+//     menor altura possível, ou seja, balanceada com base apenas
+//     no estabelecimento de uma nova ordem de inserção:
+template<typename T>
+BinaryTree<T> structures::BinaryTree<T>::balance() {
+    
+}
+
+template<typename T>
 void structures::BinaryTree<T>::insert(const T& data) {
     Node *Novo = root, *pai = nullptr;
-    while (Novo != nullptr) {
+    while (Novo) {
         pai = Novo;
         Novo = pai->avanca(data);
     }
     Novo = new Node(data);
-    if (root == nullptr) {
-        root = Novo;
-    } else {
+    if (root) {
         pai->insert(Novo, data);
+    } else {
+        root = Novo;
     }
     size_++;
 }
@@ -147,24 +219,27 @@ void structures::BinaryTree<T>::remove(const T& data) {
         return;
     }
     Node *pai = root, *remover = root;
-    while (remover->data != data) {
+    while (remover && remover->data != data) {
         pai = remover;
         remover = remover->avanca(data);
-        if (remover == nullptr) {
-            return;
-        }
+    }
+    if (!remover) {
+        return;
     }
     Node* escolha[2] = {remover->left, remover->right};
     int cond = remover->terminal();
-    int iterou = 0;
+    // cond == 3 significa que o nodo a remover só tem
+    // subárvore esquerda, o único caso em que o substituto
+    // não será a subárvore direita (porque, se a subárvore
+    // direita também for nula, não precisa de substituto)
     Node *substituto = escolha[cond != 3], *pai2 = pai;
-    if (!cond) {  // se não for terminal
-        while (substituto->left != nullptr) {
+    if (!cond) {  // se tiver ambas as subárvores
+        while (substituto->left) {
             pai2 = substituto;
             substituto = substituto->left;
         }
         // caso pelo menos uma iteração seja feita
-        iterou = substituto != remover->right;
+        int iterou = substituto != remover->right;
         Node *escolha2[3] = {pai2->left,
                              substituto->right,
                              remover->right};
@@ -172,10 +247,10 @@ void structures::BinaryTree<T>::remove(const T& data) {
         pai2->insert(escolha2[iterou], data);
         // se sim, remover->right, se não, mantém
         substituto->insert(escolha2[iterou + 1],
-                            remover->right->data);
+                           remover->right->data);
         // independente de quantas iterações...
         substituto->insert(remover->left,
-                            remover->left->data);
+                           remover->left->data);
     }
     pai->insert(substituto, data);
     size_--;
@@ -186,7 +261,7 @@ void structures::BinaryTree<T>::remove(const T& data) {
 template<typename T>
 bool structures::BinaryTree<T>::contains(const T& data) const {
     auto aux = root;
-    while (aux != nullptr) {
+    while (aux) {
         if (aux->data == data) {
             return true;
         }
@@ -197,7 +272,7 @@ bool structures::BinaryTree<T>::contains(const T& data) const {
 
 template<typename T>
 bool structures::BinaryTree<T>::empty() const {
-    return static_cast<int>(size_) == 0;
+    return !size_;
 }
 
 template<typename T>
@@ -208,7 +283,7 @@ std::size_t structures::BinaryTree<T>::size() const {
 template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::pre_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->pre_order(&v);
     }
     return v;
@@ -217,7 +292,7 @@ structures::ArrayList<T> structures::BinaryTree<T>::pre_order() const {
 template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::in_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->in_order(&v);
     }
     return v;
@@ -226,7 +301,7 @@ structures::ArrayList<T> structures::BinaryTree<T>::in_order() const {
 template<typename T>
 structures::ArrayList<T> structures::BinaryTree<T>::post_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->post_order(&v);
     }
     return v;

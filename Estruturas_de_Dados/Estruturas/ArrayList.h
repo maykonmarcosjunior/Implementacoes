@@ -72,8 +72,9 @@ void ArrayList<T>::push_back(const T& data) {
     if (full()) {
         throw out_of_range("lista cheia");
     } else {
-    contents[size_] = data;
-    size_++;}
+        contents[size_] = data;
+        size_++;
+    }
 }
 
 template<typename T>
@@ -81,10 +82,12 @@ void ArrayList<T>::push_front(const T& data) {
     if (full()) {
         throw out_of_range("lista cheia");
     } else {
-    for (int i = static_cast<int>(size_);
-    i > 0; i--) {
-        contents[i] = contents[i-1];
-    } contents[0] = data; size_++;}
+        for (int i = static_cast<int>(size_); i > 0; i--) {
+            contents[i] = contents[i-1];
+        }
+        contents[0] = data; 
+        size_++;
+    }
 }
 
 template<typename T>

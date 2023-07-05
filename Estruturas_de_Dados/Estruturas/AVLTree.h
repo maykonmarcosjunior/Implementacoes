@@ -46,16 +46,17 @@ private:
             delete right;
         }
         int HLeft() {
-            int altE = (left != nullptr)? left->height : -1;
+            int altE = (left)? left->height : -1;
             return altE;
         }
         int HRight() {
-            int altR = (right != nullptr)? right->height : -1;
+            int altR = (right)? right->height : -1;
             return altR;
         }
+        
         void pre_order(ArrayList<T>* v) const {
             v->push_back(data);
-            if (left != nullptr) {
+            if (left) {
                 left->pre_order(v);
             }
             if (right != nullptr) {
@@ -63,19 +64,19 @@ private:
             }
         }
         void in_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
+            if (left) {
                 left->in_order(v);
             }
             v->push_back(data);
-            if (right != nullptr) {
+            if (right) {
                 right->in_order(v);
             }
         }
         void post_order(ArrayList<T>* v) const {
-            if (left != nullptr) {
+            if (left) {
                 left->post_order(v);
             }
-            if (right != nullptr) {
+            if (right) {
                 right->post_order(v);
             }
             v->push_back(data);
@@ -90,31 +91,25 @@ private:
             int cD = right != nullptr;
             return 2*cE + cD + 1 - 4*cE*cD;
         }
-        /*
-        faz com que a altura seja igual
-        à maior das subárvore + 1
-        */
+        // faz com que a altura seja igual
+        // à maior das subárvore + 1
         void corrige_altura() {
             int LL = HLeft(), RR = HRight();
             height = (RR > LL) ? RR + 1 : LL + 1;
         }
-        /*
-        para o percorrer da lista
-        buscando um elemento
-        */
+        // para o percorrer da lista
+        // buscando um elemento
+        // iterativamente
         Node* avanca(const T& dataNew) {
             Node* vet[2] = {right, left};
-            int cond = data > dataNew;
-            return vet[cond];
+            return vet[data > dataNew];
         }
-        /*
-        centraliza a inserção
-        */
+        // centraliza a inserção
         void insert(Node* novo, const T& dataNew) {
             Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
             *(vet[cond]) = novo;
-            if (novo != nullptr) {
+            if (novo) {
                 novo->pai = this;
             }
             corrige_altura();
@@ -128,7 +123,7 @@ private:
             B->insert(this, data);
             // B->pai = paiA
             B->pai = nullptr;
-            if (paiA != nullptr) {
+            if (paiA) {
                 paiA->insert(B, B->data);
             }
         }
@@ -141,7 +136,7 @@ private:
             B->insert(this, data);
             // B->pai = paiA
             B->pai = nullptr;
-            if (paiA != nullptr) {
+            if (paiA) {
                 paiA->insert(B, B->data);
             }
         }
@@ -190,7 +185,7 @@ private:
             if (abs(fb()) > 1) {
                 rotacao();
             }
-            if (pai != nullptr) {
+            if (pai) {
                 pai->updateHeight();
             }
         }
@@ -210,15 +205,15 @@ structures::AVLTree<T>::~AVLTree() {
 template<typename T>
 void structures::AVLTree<T>::insert(const T& data) {
     Node *Novo = root, *pai = nullptr;
-    while (Novo != nullptr) {
+    while (Novo) {
         pai = Novo;
         Novo = pai->avanca(data);
     }
     Novo = new Node(data);
-    if (root == nullptr) {
-        root = Novo;
-    } else {
+    if (root) {
         pai->insert(Novo, data);
+    } else {
+        root = Novo;
     }
     size_++;
     Novo->updateHeight();
@@ -230,24 +225,27 @@ void structures::AVLTree<T>::remove(const T& data) {
         return;
     }
     Node *pai = root, *remover = root;
-    while (remover->data != data) {
+    while (remover && remover->data != data) {
         pai = remover;
-        remover = pai->avanca(data);
-        if (remover == nullptr) {
-            return;
-        }
+        remover = remover->avanca(data);
+    }
+    if (!remover) {
+        return;
     }
     Node* escolha[2] = {remover->left, remover->right};
     int cond = remover->terminal();
-    int iterou = 0;
+    // cond == 3 significa que o nodo a remover só tem
+    // subárvore esquerda, o único caso em que o substituto
+    // não será a subárvore direita (porque, se a subárvore
+    // direita também for nula, não precisa de substituto)
     Node *substituto = escolha[cond != 3], *pai2 = pai;
-    if (!cond) {  // se não for terminal
-        while (substituto->left != nullptr) {
+    if (!cond) {  // se tiver ambas as subárvores
+        while (substituto->left) {
             pai2 = substituto;
             substituto = substituto->left;
         }
         // caso pelo menos uma iteração seja feita
-        iterou = substituto != remover->right;
+        int iterou = substituto != remover->right;
         Node *escolha2[3] = {pai2->left,
                              substituto->right,
                              remover->right};
@@ -255,10 +253,10 @@ void structures::AVLTree<T>::remove(const T& data) {
         pai2->insert(escolha2[iterou], data);
         // se sim, remover->right, se não, mantém
         substituto->insert(escolha2[iterou + 1],
-                           remover->right->data);
+                            remover->right->data);
         // independente de quantas iterações...
         substituto->insert(remover->left,
-                           remover->left->data);
+                            remover->left->data);
     }
     pai->insert(substituto, data);
     size_--;
@@ -269,16 +267,13 @@ void structures::AVLTree<T>::remove(const T& data) {
 
 template<typename T>
 int structures::AVLTree<T>::height() const {
-    if (root == nullptr) {
-        return -1;
-    }
-    return root->height;
+    return root? root->height : -1;
 }
 
 template<typename T>
 bool structures::AVLTree<T>::contains(const T& data) const {
     auto aux = root;
-    while (aux != nullptr) {
+    while (aux) {
         if (aux->data == data) {
             return true;
         }
@@ -289,7 +284,7 @@ bool structures::AVLTree<T>::contains(const T& data) const {
 
 template<typename T>
 bool structures::AVLTree<T>::empty() const {
-    return static_cast<int>(size_) == 0;
+    return !size_;
 }
 
 template<typename T>
@@ -300,7 +295,7 @@ std::size_t structures::AVLTree<T>::size() const {
 template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::pre_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->pre_order(&v);
     }
     return v;
@@ -309,7 +304,7 @@ structures::ArrayList<T> structures::AVLTree<T>::pre_order() const {
 template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::in_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->in_order(&v);
     }
     return v;
@@ -318,7 +313,7 @@ structures::ArrayList<T> structures::AVLTree<T>::in_order() const {
 template<typename T>
 structures::ArrayList<T> structures::AVLTree<T>::post_order() const {
     ArrayList<T> v = ArrayList<T>(size_);
-    if (root != nullptr) {
+    if (root) {
         root->post_order(&v);
     }
     return v;
