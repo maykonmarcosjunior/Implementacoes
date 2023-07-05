@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "gtest/gtest.h"
-#include "binary_tree.h"
+#include "BinaryTree.h"
 
 namespace {
 

@@ -41,6 +41,10 @@ private:
             right = nullptr;
             pai = nullptr;
         }
+        ~Node() {
+            delete left;
+            delete right;
+        }
         int HLeft() {
             int altE = (left != nullptr)? left->height : -1;
             return altE;
@@ -192,14 +196,6 @@ private:
         }
     };
 
-    void destructor(Node* Nodo) {
-        if (Nodo != nullptr) {
-            destructor(Nodo->left);
-            destructor(Nodo->right);
-            delete Nodo;
-        }
-    }
-
     Node* root = nullptr;
     std::size_t size_;
 };
@@ -208,7 +204,7 @@ private:
 
 template<typename T>
 structures::AVLTree<T>::~AVLTree() {
-    destructor(root);
+    delete root;
 }
 
 template<typename T>
@@ -266,6 +262,7 @@ void structures::AVLTree<T>::remove(const T& data) {
     }
     pai->insert(substituto, data);
     size_--;
+    remover->left = remover->right = nullptr;
     delete remover;
     pai2->updateHeight();
 }

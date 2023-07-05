@@ -2,7 +2,7 @@
    Copyright [2021] <Andre Zanghelini>: MemoryManipulation */
 
 #include "gtest/gtest.h"
-#include "./array_queue.h"
+#include "ArrayQueue.h"
 
 int main(int argc, char* argv[]) {
     std::srand(std::time(NULL));

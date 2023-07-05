@@ -1,7 +1,7 @@
 // Copyright 2016 João Paulo Taylor Ienczak Zanette
 
 #include "gtest/gtest.h"
-#include "./circular_list.h"
+#include "CircularList.h"
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);

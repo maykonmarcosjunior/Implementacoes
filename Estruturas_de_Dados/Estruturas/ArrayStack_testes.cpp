@@ -3,7 +3,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "array_stack.h"
+#include "ArrayStack.h"
 
 #include <stdexcept>
 

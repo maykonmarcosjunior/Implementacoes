@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "linked_list.h"
+#include "LinkedList.h"
 
 int main(int argc, char* argv[]) {
     std::srand(std::time(NULL));

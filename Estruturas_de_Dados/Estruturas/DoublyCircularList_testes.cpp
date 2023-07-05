@@ -1,6 +1,6 @@
 // Copyright 2016 João Paulo Taylor Ienczak Zanette
 #include "gtest/gtest.h"
-#include "doubly_circular_list.h"
+#include "DoublyCircularList.h"
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);

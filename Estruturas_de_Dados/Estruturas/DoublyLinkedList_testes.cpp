@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "doubly_linked_list.h"
+#include "DoublyLinkedList.h"
 
 int main(int argc, char* argv[]) {
     ::testing::InitGoogleTest(&argc, argv);

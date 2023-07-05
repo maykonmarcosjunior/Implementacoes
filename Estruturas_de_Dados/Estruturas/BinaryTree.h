@@ -24,6 +24,30 @@ public:
 
     structures::ArrayList<T> post_order() const;
 
+    //******************************************************************
+    // Prova prática - implementações necessárias:
+
+    // (1) determinação da altura da árvore:
+    int height();
+
+    // (2) contagem do número de folhas:
+    int leaves();
+
+    // (3) criação de uma lista com o menor (mínimo) e o maior (máximo)
+    //     valor da árvore:
+    ArrayList<T> limits();
+
+    // (4) criação de uma duplicação, em memória, da árvore:
+    BinaryTree<T> clone();
+
+    // (5) remove nós pelo número de seus filhos:
+    void filter(int n_child);
+
+    // (6) criação de um nova árvore que tenha todos os valores e a
+    //     menor altura possível, ou seja, balanceada com base apenas
+    //     no estabelecimento de uma nova ordem de inserção:
+    BinaryTree<T> balance();
+
 private:
     struct Node {
         T data;
@@ -34,6 +58,10 @@ private:
             data = newData;
             left = nullptr;
             right = nullptr;
+        }
+        ~Node() {
+            delete left;
+            delete right;
         }
         void pre_order(ArrayList<T>* v) const {
             v->push_back(data);
@@ -67,25 +95,24 @@ private:
             int cond = data > dataNew;
             *(vet[cond]) = novo;
         }
+        // para percorrer a lista
+        // buscando um elemento
         Node* avanca(const T& dataNew) {
             Node* vet[2] = {right, left};
             int cond = data > dataNew;
             return vet[cond];
         }
+        // retorna 0 se tiver subárvores
+        // esquerdas e direitas,
+        // 1 se for um nodo terminal,
+        // 2 se tiver só subárvore direita e
+        // 3 se só tiver subárvore esquerda
         int terminal() {
             int cE = left != nullptr;
             int cR = right != nullptr;
             return 2*cE + cR + 1 - 4*cE*cR;
         }
     };
-
-    void destructor(Node* Nodo) {
-        if (Nodo != nullptr) {
-            destructor(Nodo->left);
-            destructor(Nodo->right);
-            delete Nodo;
-        }
-    }
 
     Node* root = nullptr;
     std::size_t size_ = 0u;
@@ -95,7 +122,7 @@ private:
 
 template<typename T>
 structures::BinaryTree<T>::~BinaryTree() {
-    destructor(root);
+    delete root;
 }
 
 template<typename T>
@@ -152,6 +179,7 @@ void structures::BinaryTree<T>::remove(const T& data) {
     }
     pai->insert(substituto, data);
     size_--;
+    remover->left = remover->right = nullptr;
     delete remover;
 }
 
