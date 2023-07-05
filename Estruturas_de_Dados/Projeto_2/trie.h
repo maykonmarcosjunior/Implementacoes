@@ -118,16 +118,17 @@ structures::Trie::~Trie() {
 }
 void structures::Trie::insert(std::string palavra, int inicio, int N) {
     Node *pai = root, *Novo = root->find(palavra[0]);
-    int i = 0, max = static_cast<int>(palavra.length());
+    int i = 0, max = static_cast<int>(palavra.length()) - 1;
     // verificando quais letras já estão lá
     while (Novo != nullptr && i < max) {
         i++;
         pai = Novo;
         Novo = pai->find(palavra[i%max]);
     }
-    // se a palavra não foi inserida
+    // se a palavra não foi
+    // inserida por completo
     if (i < max || !pai->is_word) {
-        for (; i < max; ++i) {
+        for (; i < max + 1; ++i) {
             Novo = new Node(palavra[i], pai);
             pai->insert(Novo);
             pai = Novo;
