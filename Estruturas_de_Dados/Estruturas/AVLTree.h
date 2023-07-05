@@ -91,8 +91,8 @@ private:
         à maior das subárvore + 1
         */
         void corrige_altura() {
-            int certo = (HRight() > HLeft()) ? HRight() + 1 : HLeft() + 1;
-            height = certo;
+            int LL = HLeft(), RR = HRight();
+            height = (RR > LL) ? RR + 1 : LL + 1;
         }
         /*
         para o percorrer da lista
@@ -259,10 +259,10 @@ void structures::AVLTree<T>::remove(const T& data) {
         pai2->insert(escolha2[iterou], data);
         // se sim, remover->right, se não, mantém
         substituto->insert(escolha2[iterou + 1],
-                            remover->right->data);
+                           remover->right->data);
         // independente de quantas iterações...
         substituto->insert(remover->left,
-                            remover->left->data);
+                           remover->left->data);
     }
     pai->insert(substituto, data);
     size_--;
