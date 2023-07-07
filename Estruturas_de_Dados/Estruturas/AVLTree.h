@@ -130,9 +130,11 @@ private:
             Node **vet[2] = {&right, &left};
             int cond = data > dataNew;
             *(vet[cond]) = novo;
-            if (novo) {
-                novo->pai = this;
-            }
+            vet[0] = &novo;
+            vet[1] = &this;
+            Node *vet2 = {this, pai};
+            cond = !novo;
+            *(vet[cond]) = vet2[cond];
             corrige_altura();
         }
         void simpleLeft() {

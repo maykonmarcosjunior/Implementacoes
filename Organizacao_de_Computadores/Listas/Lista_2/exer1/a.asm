@@ -4,7 +4,7 @@
 # A = B - C
 
 .data
-	A: .word 0
+	A: .word 1
 	B: .word 10
 	C: .word 30
 

@@ -13,7 +13,7 @@
 	D: .word 25
 	E: .word 30
 	F: .word 35
-	G: .word 0 0 0 0
+	G: .word 1 0 0 0
 	H: .word 0 0 0 0
 .text
 main:
