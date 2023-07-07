@@ -3,7 +3,7 @@
 # v[0] = 1; v[1] = 3; v[2] = 2; v[3] = 1; v[4] = 4; v[5] = 5;
 # Assuma que o registrador $s0 contém o endereço de início do vetor como sendo 0x10010020.
 .text
-main:
+main_:
 	li $s0, 0x10010020
 	li $a0, 1
 	jal LOOP

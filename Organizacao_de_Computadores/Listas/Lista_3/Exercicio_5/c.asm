@@ -5,7 +5,7 @@
 # – Implemente pequenos programas, um para cada expressão abaixo.
 # if (a ≤ b) {a = a + 1;}
 .text
-main:
+main_:
 	li $v0, 5
 	syscall
 	move $a0, $v0 # a0 = a
@@ -17,4 +17,3 @@ main:
 exit:
 	li $v0, 1
 	syscall
-	nop

@@ -1,7 +1,7 @@
 # Faça um programa que calcule: ∑i:1 a 5
 
 .text
-main:
+main_:
 	li $a0, 0
 	li $a1, 1
 	li $a2, 5

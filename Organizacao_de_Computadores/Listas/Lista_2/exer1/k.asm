@@ -3,10 +3,10 @@
 # memória de dados. Use os registradores de $s0 até $s5 para manipular os dados.
 # A[45] = B – C + D[67];
 .data
-	A: .word 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 555
+	A: .space 184
 	B: .word 100
 	C: .word 99
-	D: .word 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 222
+	D: .space 272
 
 .text
 main:

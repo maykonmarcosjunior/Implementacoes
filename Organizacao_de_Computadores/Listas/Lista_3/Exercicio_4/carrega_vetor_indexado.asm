@@ -4,7 +4,7 @@
 # i = 0; v[i] = 1; i = i + 1; v[i] = 3; i = i + 1; v[i] = 2;
 # i = i + 1; v[i] = 1; i = i + 1; v[i] = 4; i = i + 1; v[i] = 5;
 .text
-main:
+main_:
 	li $s0, 0x10010020
 	li $a1, 0
 

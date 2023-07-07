@@ -16,7 +16,7 @@
 	G: .word 10 0 0 0 # 10 5 0 0
 	H: .word 0 0 0 0
 .text
-main:
+main_:
 	la $s0, A
 	la $s1, B
 	la $s2, C

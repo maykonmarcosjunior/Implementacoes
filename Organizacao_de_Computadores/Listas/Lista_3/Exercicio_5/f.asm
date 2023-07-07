@@ -48,4 +48,3 @@ exit:
 	li $v0, 1
 	move $a0, $a1
 	syscall
-	nop

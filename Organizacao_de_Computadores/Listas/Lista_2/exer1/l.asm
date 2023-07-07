@@ -1,9 +1,9 @@
 # Converta as linhas de instruções escritas em linguagem C para instruções em Assembly do MIPS.
 # Considere que as variáveis indicadas A, B, C, D, E e F foram todas armazenadas previamente na
 # memória de dados. Use os registradores de $s0 até $s5 para manipular os dados.
-# A[79] = B – C[18] + D;
+# A[79] = B – C[18] + D.
 .data
-	A: .space 320
+	A: .space 32
 	B: .word 222
 	C: .space 76
 	D: .word 50

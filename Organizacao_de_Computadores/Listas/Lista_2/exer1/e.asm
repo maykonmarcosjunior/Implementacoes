@@ -1,10 +1,10 @@
 # Converta as linhas de instruções escritas em linguagem C para instruções em Assembly do MIPS.
 # Considere que as variáveis indicadas A, B, C, D, E e F foram todas armazenadas previamente na
 # memória de dados. Use os registradores de $s0 até $s5 para manipular os dados.
-# E = (A – (B – C) + F);
+# E = (A – (B – C) + F).
 
 .data
-	A: .word 10
+	A: .word 11
 	B: .word 20
 	C: .word -10
 	E: .word 0

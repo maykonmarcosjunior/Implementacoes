@@ -42,4 +42,3 @@ exit:
 	sw $t0, 0($s0)
 	sw $t1, 0($s1)
 	sw $t2, 0($s2)
-	nop
